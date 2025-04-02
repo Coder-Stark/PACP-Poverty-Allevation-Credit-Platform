@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useContext } from "react";  // ⭐ Import useContext
+import React, { useEffect, useState, useContext } from "react"; 
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils.js";
-import { AuthContext } from "../context/AuthContext";  // ⭐ Import AuthContext
+import { handleError, handleSuccess } from "../../utils.js";
+import { AuthContext } from "../../context/AuthContext.jsx"; 
 
 function Login() {
   const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);  // ⭐ Use context login function
+  const { login } = useContext(AuthContext);  //Use context login function
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -27,7 +27,7 @@ function Login() {
       return handleError("Email and Password required");
     }
     try {
-      const BASE_URL = "https://loginsignupbackend-dz69.onrender.com";
+      const BASE_URL = import.meta.env.VITE_BACKEND_URL;
       const url = `${BASE_URL}/auth/login`;
       const res = await fetch(url, {
         method: "POST",
@@ -36,6 +36,7 @@ function Login() {
         },
         body: JSON.stringify(loginInfo),
       });
+      console.log(res.json());
       const result = await res.json();
       const { success, message, error, jwtToken, name } = result;
 

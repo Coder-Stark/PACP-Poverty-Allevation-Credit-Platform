@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";  // ⭐ Import useContext
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { handleError, handleSuccess } from "../utils.js";
-import { AuthContext } from "../context/AuthContext";  // ⭐ Import AuthContext
-
+import { handleError, handleSuccess } from "../../utils.js";
+import { AuthContext } from "../../context/AuthContext.jsx";  // ⭐ Import AuthContext
 function Signup() {
-  const [signupInfo, setSignupInfo] = useState({ name: "", email: "", password: "" });
+  const [signupInfo, setSignupInfo] = useState({ name: "", email: "", password: "", phone: ""});
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);  // ⭐ Use context login function
 
@@ -16,12 +15,12 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const { name, email, password } = signupInfo;
-    if (!name || !email || !password) {
+    const { name, email, password, phone} = signupInfo;
+    if (!name || !email || !password || !phone) {
       return handleError("Name, Email, and Password required");
     }
     try {
-      const BASE_URL = "https://loginsignupbackend-dz69.onrender.com";
+      const BASE_URL = import.meta.env.VITE_BACKEND_URL;
       const url = `${BASE_URL}/auth/signup`;
 
       const res = await fetch(url, {
@@ -36,9 +35,9 @@ function Signup() {
 
       if (success) {
         handleSuccess(message);
-        login(jwtToken, name);  // ⭐ Automatically log in the user using AuthContext
+        login(jwtToken, name);                   //Automatically log in the user using AuthContext
         setTimeout(() => {
-          navigate("/portfolio");  // ⭐ Redirect to portfolio directly
+          navigate("/portfolio");                //Redirect to portfolio directly
         }, 1000);
       } else {
         handleError(error?.details?.[0]?.message || message);
@@ -90,6 +89,19 @@ function Signup() {
               value={signupInfo.password}
               name="password"
               placeholder="Enter Your Password"
+              className="w-full text-lg p-2 border-b border-gray-400 outline-none focus:border-purple-500"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label htmlFor="phone" className="text-lg font-medium">
+              Phone
+            </label>
+            <input
+              onChange={handleChange}
+              type="phone"
+              value={signupInfo.phone}
+              name="phone"
+              placeholder="Enter Your Phone number"
               className="w-full text-lg p-2 border-b border-gray-400 outline-none focus:border-purple-500"
             />
           </div>

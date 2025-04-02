@@ -7,9 +7,15 @@ import Services from './pages/Services'
 // import Schemes from './pages/Schemes'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import PortFolio from './pages/PortFolio';
+
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+
+import AdminDashboard from './pages/adminView/AdminDashboard';
+import ManageUsers from './pages/adminView/ManageUsers';
+import ManagePayments from './pages/adminView/ManagePayments';
+import Notifications from './pages/adminView/Notifications';
 
 function App() {
   return (
@@ -24,9 +30,17 @@ function App() {
               {/* <Route path='/schemes' element={<Schemes/>}/> */}
               <Route path='/about' element={<AboutUs/>}/>
               <Route path='/contact' element={<ContactUs/>}/>
-              <Route path='/portfolio' element={<PortFolio/>}/>
               <Route path='/login' element={<Login/>}/>
               <Route path='/signup' element={<Signup />} />
+
+              {/* User routes  */}
+              <Route path='/portfolio' element={<PortFolio/>}/>
+
+              {/* admin routes  */}
+              <Route path='/admin/dashboard' element={<AdminDashboard/>} />
+              <Route path='/admin/manag-users' element={<ManageUsers />} />
+              <Route path='/admin/manage-payments' element={<ManagePayments />} />
+              <Route path='/admin/notifications' element={<Notifications/>} />
             </Route>
           </Routes>
         </BrowserRouter>
