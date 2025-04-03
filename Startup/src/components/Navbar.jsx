@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 function Navbar() {
-  const {isLoggedIn, user, logout} = useContext(AuthContext);
+  const {isLoggedIn, role, logout} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = ()=>{
@@ -34,13 +34,17 @@ function Navbar() {
           <Link to="/contact" className="sm:mx-3 lg:mx-8 hover:underline hover:bg-purple-300 rounded-lg px-3 py-1 transition duration-300">Contact</Link>
 
           {/* Show MyPortFolio if logged in  */}
-          {
-            isLoggedIn && (
-              <Link to='/portfolio' className="sm:mx-3 lg:mx-8 hover:underline hover:bg-purple-300 rounded-lg px-3 py-1 transition duration-300">
-                My PortFolio
+          {isLoggedIn && role && (
+            role === "admin" ? (
+              <Link to="/admin/dashboard" className="sm:mx-3 lg:mx-8 hover:underline hover:bg-purple-300 rounded-lg px-3 py-1 transition duration-300">
+                Admin Dashboard
+              </Link>
+            ) : (
+              <Link to="/portfolio" className="sm:mx-3 lg:mx-8 hover:underline hover:bg-purple-300 rounded-lg px-3 py-1 transition duration-300">
+                My Portfolio
               </Link>
             )
-          }
+          )}
         </nav>
 
         {/* Login Button */}
