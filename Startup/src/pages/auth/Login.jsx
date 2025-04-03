@@ -10,10 +10,13 @@ function Login() {
   const { login } = useContext(AuthContext);  //Use context login function
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      navigate("/portfolio");
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+
+    if(token){
+      navigate(role === "admin" ? "/admin/dashboard" : "/portfolio");
     }
-  }, []);
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,17 +37,21 @@ function Login() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(loginInfo),
+        body: JSON.stringify({email, password}),
       });
-      console.log(res.json());
       const result = await res.json();
-      const { success, message, error, jwtToken, name } = result;
+      // console.log(result);
+      const { success, message, error, jwtToken, name, role } = result;
 
       if (success) {
         handleSuccess(message);
-        login(jwtToken, name);  // ⭐ Use AuthContext login function instead of localStorage
+        login(jwtToken, name, role);  //Use AuthContext login function instead of localStorage
         setTimeout(() => {
-          navigate("/portfolio");
+          if(role === "admin"){
+            navigate("/admin/dashboard");
+          }else{
+            navigate("/portfolio");
+          }
         }, 1000);
       } else {
         handleError(error?.details?.[0]?.message || message);
