@@ -47,7 +47,6 @@ function Signup() {
 
       if (success) {
         handleSuccess(message);
-        login(jwtToken, name, role);                   //Automatically log in the user using AuthContext
         setTimeout(() => {
           navigate("/login");
         }, 1000);
