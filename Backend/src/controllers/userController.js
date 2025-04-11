@@ -1,5 +1,4 @@
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 
 // Get User Data
 const getUserData = async (req, res) => {
@@ -16,11 +15,20 @@ const getUserData = async (req, res) => {
 // Fetch All Users (Admin Only)
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().select("-password");
+        const users = await User.find({role: "user"}).select("-password");
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Internal server error", error });
     }
 };
 
-module.exports = { getUserData, getAllUsers };
+const getAllAdmins = async (req, res) => {
+    try {
+        const users = await User.find({role: "admin"}).select("-password");
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error", error });
+    }
+};
+
+module.exports = { getUserData, getAllUsers, getAllAdmins};
