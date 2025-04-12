@@ -1,12 +1,14 @@
 import React from 'react'
 import { AuthContextProvider } from './context/AuthContext';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home'
 import Services from './pages/Services'
 // import Schemes from './pages/Schemes'
 import AboutUs from './pages/AboutUs'
 import ContactUs from './pages/ContactUs'
+
 import PortFolio from './pages/PortFolio';
 
 import Login from './pages/auth/Login';
@@ -14,6 +16,8 @@ import Signup from './pages/auth/Signup';
 
 import AdminDashboard from './pages/adminView/AdminDashboard';
 import ManageUsers from './pages/adminView/ManageUsers';
+import FinanceOverview from './pages/adminView/FinanceOverview';
+
 import ManagePayments from './pages/adminView/ManagePayments';
 import Notifications from './pages/adminView/Notifications';
 
@@ -38,7 +42,8 @@ function App() {
 
               {/* admin routes  */}
               <Route path='/admin/dashboard' element={<AdminDashboard/>} />
-              <Route path='/admin/manag-users' element={<ManageUsers />} />
+              <Route path='/admin/manage-users' element={<ManageUsers />} />
+              <Route path='/admin/finance-overview' element={<FinanceOverview/>} />
               <Route path='/admin/manage-payments' element={<ManagePayments />} />
               <Route path='/admin/notifications' element={<Notifications/>} />
             </Route>
