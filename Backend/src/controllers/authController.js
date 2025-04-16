@@ -1,9 +1,9 @@
-const UserModel = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import UserModel from '../models/UserModel.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 //Signup User
-const signup = async (req, res) => {
+export const signup = async (req, res) => {
     try {
         const { name, email, password, phone, role} = req.body;
         const user = await UserModel.findOne({ email });
@@ -22,7 +22,7 @@ const signup = async (req, res) => {
 }
 
 //Login User
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await UserModel.findOne({ email });
@@ -43,5 +43,3 @@ const login = async (req, res) => {
         res.status(500).json({message: "Internal server errror",success: false})
     }
 }
-
-module.exports = {signup, login};

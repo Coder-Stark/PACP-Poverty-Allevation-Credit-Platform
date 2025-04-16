@@ -1,16 +1,16 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const AuthRouter = require('./src/routes/authRoutes');
-const userRouters = require('./src/routes/userRoutes');
-const connectDB = require('./src/config/db'); //Import connectDB
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './src/config/db.js';
+import AuthRouter from './src/routes/authRoutes.js';
+import UserRouter from './src/routes/userRoutes.js';
 
-require('dotenv').config();
+dotenv.config();
+const app = express();
 
 connectDB();  
 
-const PORT = process.env.PORT || 8080;
-
+//for testing
 app.get('/', (req, res) => {
     res.send('API is running');
 });
@@ -20,8 +20,9 @@ app.use(cors());
 
 //routes
 app.use('/auth', AuthRouter);
-app.use('/api', userRouters);
+app.use('/api', UserRouter);
 
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Server is running on ${PORT}`);
 });

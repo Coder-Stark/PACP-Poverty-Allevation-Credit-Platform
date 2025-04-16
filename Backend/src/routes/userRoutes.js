@@ -1,13 +1,13 @@
-const express = require('express');
-const {getUserData, getAllUsers, getAllAdmins} = require('../controllers/userController');
-const {authMiddleware, isAdmin} = require('../middleware/authMiddlware');
+import express from 'express';
+import { getUserData, getAllAdmins, getAllUsers } from '../controllers/userController.js';
+import { authMiddleware, isAdmin } from '../middleware/authMiddlware.js';
 
 const router = express.Router();
 
 router.get('/me', authMiddleware, getUserData);
 
-router.get('/allusers', authMiddleware, isAdmin, getAllUsers);      //only for admins
+//only for admins
+router.get('/allusers', authMiddleware, isAdmin, getAllUsers);     
+router.get('/alladmins', authMiddleware, isAdmin, getAllAdmins);     
 
-router.get('/alladmins', authMiddleware, isAdmin, getAllAdmins);      //only for admins
-
-module.exports = router;
+export default router;
