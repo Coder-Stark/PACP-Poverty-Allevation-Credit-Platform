@@ -20,6 +20,7 @@ import FinanceOverview from './pages/adminView/FinanceOverview';
 
 import ManagePayments from './pages/adminView/ManagePayments';
 import Notifications from './pages/adminView/Notifications';
+import AdminUserProfile from './pages/adminView/AdminUserProfile';
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
               <Route path='/admin/finance-overview' element={<FinanceOverview/>} />
               <Route path='/admin/manage-payments' element={<ManagePayments />} />
               <Route path='/admin/notifications' element={<Notifications/>} />
+              <Route path='/admin/user/:id' element={<AdminUserProfile />}/>
             </Route>
           </Routes>
         </BrowserRouter>

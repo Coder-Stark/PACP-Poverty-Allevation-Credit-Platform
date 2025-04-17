@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function ManageUsers() {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(()=>{
     const fetchUsers = async()=>{
@@ -24,9 +25,9 @@ function ManageUsers() {
     fetchUsers();
   }, []);
 
-  // const handleViewProfile = (userId)=>{
-  //   navigate(`/profile/${userId}`);
-  // };
+  const handleViewProfile = (userId)=>{
+    navigate(`/admin/user/${userId}`);
+  };
 
   const filteredUsers = users.filter(user=>
     user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -67,7 +68,7 @@ function ManageUsers() {
                     </div>
                     <button 
                       className='ml-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded text-sm'
-                      // onClick={()=>handleViewProfile(user._id)}
+                      onClick={()=>handleViewProfile(user._id)}
                       >
                       View Profile
                     </button>

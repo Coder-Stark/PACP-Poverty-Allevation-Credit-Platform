@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
 import AuthRouter from './src/routes/authRoutes.js';
 import UserRouter from './src/routes/userRoutes.js';
+import adminRoutes from './src/routes/adminRoute.js';
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,8 @@ app.use(cors());
 //routes
 app.use('/auth', AuthRouter);
 app.use('/api', UserRouter);
+//admins
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
