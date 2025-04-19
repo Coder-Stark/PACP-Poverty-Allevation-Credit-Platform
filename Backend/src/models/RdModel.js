@@ -1,9 +1,45 @@
 import mongoose from 'mongoose';
 
-const monthlyDepositSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  amount: Number,
-  date: Date
-});
+const rdSchema = new mongoose.Schema({
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User',
+    required: true
+  },
+  hasRd: {
+    type: Boolean,
+    default: false
+  },
+  amountPerMonth: {
+    type: Number,
+    required: true
+  },
+  totalInvestedAmount:{
+    type: Number,
+    default: 0,
+  },
+  currentInvestmentValue:{
+    type: Number,
+    default: 0,
+  },
+  interestRate: {
+    type: Number,
+    required: true
+  },
+  applicationNumber: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  rdCount: {
+    type: Number,
+    default: 1,
+  },
+  lastDepositeDate: {
+    type: Date,
+    default: Date.now
+  }
+}, {timestamps: true});
 
-export default mongoose.model('MonthlyDeposit', monthlyDepositSchema);
+export default mongoose.model('RD', rdSchema);
+

@@ -2,9 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
+
 import AuthRouter from './src/routes/authRoutes.js';
 import UserRouter from './src/routes/userRoutes.js';
+
 import adminRoutes from './src/routes/adminRoute.js';
+import financeRoutes from './src/routes/financeRoute.js';
 
 dotenv.config();
 const app = express();
@@ -16,6 +19,7 @@ app.get('/', (req, res) => {
     res.send('API is running');
 });
 
+//middlware
 app.use(express.json()); 
 app.use(cors());
 
@@ -24,6 +28,7 @@ app.use('/auth', AuthRouter);
 app.use('/api', UserRouter);
 //admins
 app.use('/api/admin', adminRoutes);
+app.use('/api/finance', financeRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
