@@ -6,10 +6,6 @@ const rdSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  hasRd: {
-    type: Boolean,
-    default: false
-  },
   amountPerMonth: {
     type: Number,
     required: true

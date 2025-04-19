@@ -1,6 +1,7 @@
 // const jwt = require("jsonwebtoken");
 import jwt from 'jsonwebtoken';
 
+//user with valid token
 export const authMiddleware = (req, res, next) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
@@ -14,6 +15,7 @@ export const authMiddleware = (req, res, next) => {
   }
 };
 
+//user is admin
 export const isAdmin = (req, res, next) => {
   if (req.user?.role !== "admin") {
     return res.status(403).json({ message: "Access denied. Admins only." });

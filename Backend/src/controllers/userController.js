@@ -22,6 +22,7 @@ export const getAllUsers = async (req, res) => {
     }
 };
 
+//Fetch All Admins
 export const getAllAdmins = async (req, res) => {
     try {
         const users = await User.find({role: "admin"}).select("-password");

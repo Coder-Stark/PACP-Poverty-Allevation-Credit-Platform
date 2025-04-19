@@ -18,8 +18,6 @@ import AdminDashboard from './pages/adminView/AdminDashboard';
 import ManageUsers from './pages/adminView/ManageUsers';
 import FinanceOverview from './pages/adminView/FinanceOverview';
 
-import ManagePayments from './pages/adminView/ManagePayments';
-import Notifications from './pages/adminView/Notifications';
 import AdminUserProfile from './pages/adminView/AdminUserProfile';
 
 function App() {
@@ -45,8 +43,6 @@ function App() {
               <Route path='/admin/dashboard' element={<AdminDashboard/>} />
               <Route path='/admin/manage-users' element={<ManageUsers />} />
               <Route path='/admin/finance-overview' element={<FinanceOverview/>} />
-              <Route path='/admin/manage-payments' element={<ManagePayments />} />
-              <Route path='/admin/notifications' element={<Notifications/>} />
               <Route path='/admin/user/:id' element={<AdminUserProfile />}/>
             </Route>
           </Routes>

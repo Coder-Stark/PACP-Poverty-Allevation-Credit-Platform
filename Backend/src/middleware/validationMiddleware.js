@@ -1,6 +1,7 @@
 // const Joi = require('joi');
 import Joi from 'joi';
 
+//check for valid signup
 export const signupValidation = (req, res, next) => {
     const ADMIN_SECRET = process.env.ADMIN_PASSWORD;
     const schema = Joi.object({
@@ -39,6 +40,7 @@ export const signupValidation = (req, res, next) => {
     next();
 };
 
+//check for valid login
 export const loginValidation = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().email().required(),

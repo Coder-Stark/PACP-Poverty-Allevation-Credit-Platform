@@ -7,7 +7,8 @@ import AuthRouter from './src/routes/authRoutes.js';
 import UserRouter from './src/routes/userRoutes.js';
 
 import adminRoutes from './src/routes/adminRoute.js';
-import financeRoutes from './src/routes/financeRoute.js';
+// import financeRoutes from './src/routes/financeRoute.js';
+import rdRoutes from './src/routes/rdRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -28,7 +29,7 @@ app.use('/auth', AuthRouter);
 app.use('/api', UserRouter);
 //admins
 app.use('/api/admin', adminRoutes);
-app.use('/api/finance', financeRoutes);
+app.use('/api/finance', rdRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
