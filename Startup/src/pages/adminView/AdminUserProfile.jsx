@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
+import { handleSuccess, handleError } from '../../utils';
 
 function AdminUserProfile() {
     const {id} = useParams();            //userId passed in route
@@ -8,28 +9,29 @@ function AdminUserProfile() {
     const [rd, setRD] = useState(null);
     const [amountPerMonth, setAmountPerMonth] = useState('');
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
     
     const fetchUser = async()=>{
       try{
-          const token = localStorage.getItem('token');
-          const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/user/${id}`, {
-              headers: {
-                  Authorization : `Bearer ${token}`
-              }
+        const token = localStorage.getItem('token');
+        const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/user/${id}`, {
+            headers: {
+                Authorization : `Bearer ${token}`
+            }
+        });
+        setUser(userRes.data);
+        
+        //if user has RD, fetch RD
+        if(userRes.data.hasRD){
+          const rdRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/rd/${userRes.data._id}`,{
+            headers: {Authorization: `Bearer ${token}`},
           });
-          setUser(userRes.data);
-          //if user has RD, fetch RD
-          if(userRes.data.hasRD){
-            const rdRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/rd/${userRes.data._id}`,{
-              headers: {Authorization: `Bearer ${token}`},
-            });
-            setRD(rdRes.data);
-            setAmountPerMonth(rdRes.data.amountPerMonth);    //pre-fill for update
-          }else{
-            setRD(null);
-            setAmountPerMonth('');
-          }
+          setRD(rdRes.data);
+          // setAmountPerMonth(rdRes.data.amountPerMonth);    //pre-fill for update
+          setAmountPerMonth('');    
+        }else{
+          setRD(null);
+          setAmountPerMonth('');
+        }
       }catch(error){
           console.error({message: "Error Fetching User: ", error: error.message});
       }
@@ -39,19 +41,19 @@ function AdminUserProfile() {
       fetchUser();
     }, [id]);
 
-    /*
+    //valid detail enters
     const validateInputs = ()=>{
-      const amount = parseInt(cdAmount);
+      const amount = parseFloat(amountPerMonth);
       if(isNaN(amount) || amount <= 0){
-        alert("Please enter Valid positive numbers for CD amount");
+        handleError("Please enter Valid positive numbers for RD amount");
         return false;
       }
       return true;
     };
-    */
 
     const handleCreateRd = async()=>{
-      // if(!validateInputs()) return;
+      if(!validateInputs()) return;
+
       try{
         setLoading(true);
         const token = localStorage.getItem('token');
@@ -61,18 +63,19 @@ function AdminUserProfile() {
         },{
           headers: {Authorization: `Bearer ${token}`},
         });
-        setMessage("RD Creted Successfully");
+        handleSuccess("RD Created Successfully");
         fetchUser();
-      }catch(error){
-        console.error({message: "Failed to Create RD : ", error: error.message});
-        setMessage("Error Creating RD");
+      }catch(err){
+        console.error("Failed to Create RD: ", err.message);
+        handleError("Error Creating RD");
       }finally{
         setLoading(false);
       }
     };
 
     const handleUpdateRd = async ()=>{
-      // if(!validateInputs()) return;
+      if(!validateInputs()) return;
+
       try{
         setLoading(true);
         const token = localStorage.getItem('token');
@@ -83,10 +86,10 @@ function AdminUserProfile() {
             Authorization: `Bearer ${token}`
           },
         });
-        setMessage("RD Updated Successfully");
+        handleSuccess("RD Updated Successfully");
         fetchUser();
       }catch(err){
-        console.error("Failed to Update RD : ", err);
+        console.error("Failed to Update RD : ", err.message);
         alert("Failed to Update RD");
       }finally{
         setLoading(false);

@@ -1,6 +1,7 @@
 import React from 'react'
 import { AuthContextProvider } from './context/AuthContext';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ToastContainer } from "react-toastify";
 
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home'
@@ -25,6 +26,7 @@ function App() {
     <>
       <AuthContextProvider>
         <BrowserRouter>
+        <ToastContainer position='top-right' />
           <Routes>
             <Route path='/' element={<MainLayout/>}>
               <Route index element={<Home />} />              {/* Default route */}

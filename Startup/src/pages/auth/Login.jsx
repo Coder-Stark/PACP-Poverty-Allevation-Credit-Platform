@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react"; 
 import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import { handleError, handleSuccess } from "../../utils.js";
 import { AuthContext } from "../../context/AuthContext.jsx"; 
 
@@ -102,7 +101,6 @@ function Login() {
             </Link>
           </span>
         </form>
-        <ToastContainer />
       </div>
     </div>
   );
