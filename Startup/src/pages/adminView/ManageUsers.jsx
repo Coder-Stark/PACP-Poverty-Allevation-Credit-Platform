@@ -11,7 +11,7 @@ function ManageUsers() {
     const fetchUsers = async()=>{
       try{
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/allusers`, {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/allusers`, {
           headers: {
             Authorization : `Bearer ${token}`
           }

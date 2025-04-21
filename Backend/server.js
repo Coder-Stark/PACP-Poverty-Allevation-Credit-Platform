@@ -4,10 +4,8 @@ import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
 
 import AuthRouter from './src/routes/authRoutes.js';
-import UserRouter from './src/routes/userRoutes.js';
 
-import adminRoutes from './src/routes/adminRoute.js';
-// import financeRoutes from './src/routes/financeRoute.js';
+import adminRoutes from './src/routes/adminRoutes.js';
 import rdRoutes from './src/routes/rdRoutes.js';
 
 dotenv.config();
@@ -26,10 +24,9 @@ app.use(cors());
 
 //routes
 app.use('/auth', AuthRouter);
-app.use('/api', UserRouter);
 //admins
 app.use('/api/admin', adminRoutes);
-app.use('/api/finance', rdRoutes);
+app.use('/api/finance', rdRoutes);          //RD, FD, Loan
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

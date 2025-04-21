@@ -111,8 +111,10 @@ function AdminUserProfile() {
             <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
           </div>
         </div>
+
+        <h1 className="text-3xl font-bold text-center mb-8">Deposites</h1>        
+
         <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-          
           {/* Conditionally Render RD Update or Create RD */}
           {user?.hasRD ? (
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
@@ -121,6 +123,7 @@ function AdminUserProfile() {
                 <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
                 <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
                 <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
+                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
                 <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
                 <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
           
@@ -132,7 +135,108 @@ function AdminUserProfile() {
                 </div>
               </div>
               <div className="flex justify-end space-x-4 mt-6">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                  onClick={handleUpdateRd}
+                >
+                  Update RD
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
+              <div className="space-y-4 text-gray-700">
+                <div>
+                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                  <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
+                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end mt-6">
+                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                  onClick={handleCreateRd}
+                >
+                  Create RD
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Conditionally Render FD Update or Create FD */}
+          {user?.hasRD ? (
+            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
+              <div className="space-y-4 text-gray-700">
+                <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
+                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
+                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
+                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
+                <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
+          
+                <div>
+                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                  <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
+                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-4 mt-6">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                  onClick={handleUpdateRd}
+                >
+                  Update RD
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
+              <div className="space-y-4 text-gray-700">
+                <div>
+                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                  <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
+                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end mt-6">
+                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                  onClick={handleCreateRd}
+                >
+                  Create RD
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        <h1 className="text-3xl font-bold text-center mb-8">Credits</h1>        
+
+        <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
+          {/* Conditionally Render LOAN Update or Create LOAN */}
+          {user?.hasRD ? (
+            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
+              <div className="space-y-4 text-gray-700">
+                <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
+                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
+                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
+                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
+                <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
+          
+                <div>
+                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                  <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
+                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-4 mt-6">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
                   onClick={handleUpdateRd}
                 >
                   Update RD
