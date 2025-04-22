@@ -6,12 +6,19 @@ import { handleSuccess, handleError } from '../../utils';
 function AdminUserProfile() {
     const {id} = useParams();            //userId passed in route
     const [user, setUser] = useState(null);
+    //rd details
     const [rd, setRD] = useState(null);
     const [amountPerMonth, setAmountPerMonth] = useState('');
     const [loading, setLoading] = useState(false);
+
+    //fd details
+    const [fd, setFD] = useState(null);
+    const [fdAmount, setFDAmount] = useState('');
+    const [fdTenure, setFDTenure] = useState('');
     
     const fetchUser = async()=>{
       try{
+        //fetch simple user from userModel
         const token = localStorage.getItem('token');
         const userRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/user/${id}`, {
             headers: {
@@ -20,7 +27,7 @@ function AdminUserProfile() {
         });
         setUser(userRes.data);
         
-        //if user has RD, fetch RD
+        //if user has RD, fetch RD from rdModel
         if(userRes.data.hasRD){
           const rdRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/rd/${userRes.data._id}`,{
             headers: {Authorization: `Bearer ${token}`},
@@ -32,8 +39,21 @@ function AdminUserProfile() {
           setRD(null);
           setAmountPerMonth('');
         }
+
+        //if user has FD, fetch FD from fdModel
+        if(userRes.data.hasFD){
+          const fdRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/fd/${userRes.data._id}`, {
+            headers: {Authorization: `Bearer ${token}`}
+          });
+          setFD(fdRes.data);
+        }else{
+          setFD(null);
+          setFDAmount('');
+          setFDTenure('');
+        }
+
       }catch(error){
-          console.error({message: "Error Fetching User: ", error: error.message});
+        console.error({message: "Error Fetching User: ", error: error.message});
       }
     };
 
@@ -96,6 +116,34 @@ function AdminUserProfile() {
       }
     }
 
+    const handleCreateFd = async()=>{
+      const amount = parseFloat(fdAmount);
+      const tenure = parseInt(fdTenure);
+
+      if(isNaN(amount) || amount <= 0 || isNaN(tenure) || tenure <= 0){
+        return handleError("Enter valid positive values for FD Fields");
+      }
+
+      try{
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/finance/fd/create`, {
+          userId: user._id,
+          depositAmount: amount,
+          tenureInMonths: tenure,
+        },{
+          headers: {Authorization: `Bearer ${token}`},
+        });
+        handleSuccess("Fd Created Successfully");
+        fetchUser();
+      }catch(err){
+        console.error("Failed to Create FD: ", err.message);
+        handleError("Error Creating FD");
+      }finally{
+        setLoading(false);
+      }
+    }
+
     if(!user) return <div>Loading user data...</div>
 
     return (
@@ -109,6 +157,7 @@ function AdminUserProfile() {
             <p><span className="font-semibold">Email:</span> {user.email}</p>
             <p><span className="font-semibold">Phone:</span> {user.phone}</p>
             <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
+            <p><span className="font-semibold">Has FD:</span> {user.hasFD ? "Yes" : "No"}</p>
           </div>
         </div>
 
@@ -164,30 +213,17 @@ function AdminUserProfile() {
           )}
 
           {/* Conditionally Render FD Update or Create FD */}
-          {user?.hasRD ? (
+          {user?.hasFD ? (
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Fixed Deposit (FD)</h2>
               <div className="space-y-4 text-gray-700">
-                <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
-                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
-                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
-                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
-                <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
-                <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
-          
-                <div>
-                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                  <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
-                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4 mt-6">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleUpdateRd}
-                >
-                  Update RD
-                </button>
+                <p><span className="font-semibold">Application No:</span> {fd?.applicationNumber}</p>
+                <p><span className="font-semibold">Invested Amount:</span> ₹{fd?.depositAmount}</p>
+                <p><span className="font-semibold">Maturity Amount:</span> ₹{fd?.maturityAmount}</p>
+                <p><span className="font-semibold">Interest Rate:</span> {fd?.interestRate} %</p>
+                <p><span className="font-semibold">Tenure (Months):</span> {fd?.tenureInMonths}</p>
+                <p><span className="font-semibold">Start Date:</span> {new Date(fd?.startDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold">Maturity Date:</span> {new Date(fd?.maturityDate).toLocaleDateString()}</p>
               </div>
             </div>
           ) : (
@@ -195,17 +231,23 @@ function AdminUserProfile() {
               <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
               <div className="space-y-4 text-gray-700">
                 <div>
-                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                  <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
-                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                  <label className="block font-semibold mb-1">Amount(₹):</label>
+                  <input type="number" placeholder="Enter Fixed Deposite Amount" className="w-full p-2 border rounded-lg" 
+                    value={fdAmount} onChange={(e)=> setFDAmount(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold mb-1">Tenure (in Months):</label>
+                  <input type="number" placeholder="Enter Fixed Deposite Tenure" className="w-full p-2 border rounded-lg" 
+                    value={fdTenure} onChange={(e)=> setFDTenure(e.target.value)}
                   />
                 </div>
               </div>
               <div className="flex justify-end mt-6">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleCreateRd}
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                  onClick={handleCreateFd}
                 >
-                  Create RD
+                  Create FD
                 </button>
               </div>
             </div>
@@ -214,56 +256,6 @@ function AdminUserProfile() {
         </div>
 
         <h1 className="text-3xl font-bold text-center mb-8">Credits</h1>        
-
-        <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-          {/* Conditionally Render LOAN Update or Create LOAN */}
-          {user?.hasRD ? (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
-              <div className="space-y-4 text-gray-700">
-                <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
-                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
-                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
-                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
-                <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
-                <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
-          
-                <div>
-                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                  <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
-                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end space-x-4 mt-6">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleUpdateRd}
-                >
-                  Update RD
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
-              <div className="space-y-4 text-gray-700">
-                <div>
-                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                  <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
-                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleCreateRd}
-                >
-                  Create RD
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     )
 }

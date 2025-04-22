@@ -1,7 +1,7 @@
 import RD from '../models/RdModel.js';
 import User from '../models/UserModel.js';
 
-const FLAT_INTEREST_PERCENT = 1;
+const MONTHLY_INTEREST_PERCENT = 1;
 
 //create new RD
 export const createRD = async(req, res)=>{
@@ -11,15 +11,16 @@ export const createRD = async(req, res)=>{
         const existing = await RD.findOne({userId});
         if(existing) return res.status(400).json({message: "RD already exists"});
 
-        const applicationNumber = `RD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-        const interest = (amountPerMonth * FLAT_INTEREST_PERCENT) / 100;
+        const interest = (amountPerMonth * MONTHLY_INTEREST_PERCENT) / 100;
         const currentValue = amountPerMonth + interest;
-
+        
+        const applicationNumber = `RD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        
         const newRD = await RD.create({
             userId, 
             applicationNumber,
             amountPerMonth,
-            interestRate: FLAT_INTEREST_PERCENT,
+            interestRate: MONTHLY_INTEREST_PERCENT,
             totalInvestedAmount: amountPerMonth,
             currentInvestmentValue: currentValue,
             rdCount: 1,
@@ -42,7 +43,7 @@ export const updateRD = async(req, res)=>{
         const rd = await RD.findOne({userId});
         if(!rd) return res.status(404).json({message: 'RD not found'});
 
-        const interest = (amountPerMonth * FLAT_INTEREST_PERCENT) / 100;
+        const interest = (amountPerMonth * MONTHLY_INTEREST_PERCENT) / 100;
         const totalGain = amountPerMonth + interest;
 
         rd.rdCount += 1;
@@ -82,9 +83,3 @@ export const getRDByApplicationNumber = async(req, res)=>{
         res.status(500).json({message: "Error Fetching RD by application Number", error : error.message});
     }
 }
-// //get all RDs
-// export const getAllRDs = async(req, res)=>{
-//     try{
-//         const rds = await RD.find()
-//     }
-// }

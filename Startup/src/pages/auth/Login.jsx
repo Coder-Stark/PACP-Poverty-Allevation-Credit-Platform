@@ -91,7 +91,7 @@ function Login() {
               className="w-full text-lg p-2 border-b border-gray-400 outline-none focus:border-purple-500"
             />
           </div>
-          <button className="bg-purple-600 text-white text-lg font-medium rounded-md py-2 mt-4 hover:bg-purple-700 transition-all">
+          <button className="bg-purple-600 text-white text-lg font-medium rounded-md py-2 mt-4 hover:bg-purple-700 transition-all cursor-pointer">
             Login
           </button>
           <span className="text-center text-gray-600">

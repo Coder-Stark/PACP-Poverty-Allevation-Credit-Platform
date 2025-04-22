@@ -4,10 +4,10 @@ import {createRD, updateRD, getUserRD, getRDByApplicationNumber} from '../contro
 
 const router = express.Router();
 
-router.post('/rd/create', authMiddleware, isAdmin, createRD);
-router.put('/rd/update/:userId', authMiddleware, isAdmin, updateRD);
-router.get('/rd/:userId', authMiddleware, isAdmin, getUserRD);
-router.get('/rd/app/:applicationNumber', authMiddleware, isAdmin, getRDByApplicationNumber);
+router.post('/create', authMiddleware, isAdmin, createRD);
+router.put('/update/:userId', authMiddleware, isAdmin, updateRD);
+router.get('/:userId', authMiddleware, isAdmin, getUserRD);
+router.get('/app/:applicationNumber', authMiddleware, isAdmin, getRDByApplicationNumber);
 
 // router.get('/rd', authMiddleware, isAdmin, getAllRDs);
 

@@ -67,7 +67,7 @@ function ManageUsers() {
                     <p className='text-gray-500'>{user.phone}</p>
                     </div>
                     <button 
-                      className='ml-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded text-sm'
+                      className='ml-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-1 rounded text-sm cursor-pointer'
                       onClick={()=>handleViewProfile(user._id)}
                       >
                       View Profile
