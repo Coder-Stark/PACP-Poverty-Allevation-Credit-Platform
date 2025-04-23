@@ -144,6 +144,38 @@ function AdminUserProfile() {
       }
     }
 
+    const handleImageUpload = async(e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+
+      //check max file size is 100kb (100*1024)
+      if(file.size > 102400){
+        handleError("File  Size must be less than 100 KB");
+        return;
+      }
+
+      //upload file
+      const formData = new FormData();
+      formData.append("userImage", file);
+      formData.append("userId", user._id);
+      try{
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/upload-user-image`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if(res.ok){
+          handleSuccess("Image Uploaded Successfully");
+          fetchUser();           //refresh
+        }else{
+          handleError("Failed to upload Image");
+        }
+      }catch(error){
+        console.error("Error uploading Image : ", error);
+        handleError("Something went wrong. Please try again");
+      }
+    }
+
     if(!user) return <div>Loading user data...</div>
 
     return (
@@ -151,13 +183,35 @@ function AdminUserProfile() {
         {/* User Profile */}
         <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">User Profile</h1>
-          <div className="space-y-4 text-gray-700">
-            <p><span className="font-semibold">ID:</span> {user._id}</p>
-            <p><span className="font-semibold">Name:</span> {user.name}</p>
-            <p><span className="font-semibold">Email:</span> {user.email}</p>
-            <p><span className="font-semibold">Phone:</span> {user.phone}</p>
-            <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
-            <p><span className="font-semibold">Has FD:</span> {user.hasFD ? "Yes" : "No"}</p>
+          
+          <div className="flex flex-col md:flex-row gap-8 items-start">
+            {/* Left Column : User info */}
+            <div className="space-y-4 text-gray-700">
+              <p><span className="font-semibold">ID:</span> {user._id}</p>
+              <p><span className="font-semibold">Name:</span> {user.name}</p>
+              <p><span className="font-semibold">Email:</span> {user.email}</p>
+              <p><span className="font-semibold">Phone:</span> {user.phone}</p>
+              <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
+              <p><span className="font-semibold">Has FD:</span> {user.hasFD ? "Yes" : "No"}</p>
+            </div>
+
+            {/* Right Column: User image */}
+            {/* Conditionally render shows images or upload image */}
+            {user.userImage ? (
+              <img 
+                src={user.userImage}
+                alt="User Image"
+                className='w-full max-w-xs mx-auto rounded-xl shadow-md'
+              />
+            ) : (
+              <div className='text-center border border-dashed border-gray-400 p-4 rounded-lg'>
+                <p className='mb-2 text-gray-500'>No User Image uploaded. </p>
+                <label className='inline-block bg-purple-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-purple-700'>
+                  Upload Image
+                  <input type='file' accept='image/*' className='hidden' onChange={handleImageUpload} />
+                </label>
+              </div>
+            )}
           </div>
         </div>
 

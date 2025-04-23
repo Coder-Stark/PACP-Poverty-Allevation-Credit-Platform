@@ -25,7 +25,8 @@ app.use(express.json());
 app.use(cors());
 //for uploading files
 app.use(fileUpload({
-    useTempFiles: true
+    useTempFiles: true,
+    tempFileDir: './tmp',
 }))
 
 //routes

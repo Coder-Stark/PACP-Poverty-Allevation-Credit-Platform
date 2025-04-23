@@ -1,5 +1,6 @@
 import Users from '../models/UserModel.js';
 import cloudinary from '../config/cloudinary.js';
+import fs from 'fs';
 
 //get me (current user)
 export const getUserData = async (req, res) => {
@@ -54,10 +55,20 @@ export const uploadUserImage = async (req, res)=>{
         if(!imageFile){
             return res.status(400).json({error: "User image file is required"});
         }
+        //check size limit: 100KB
+        const MAX_IMAGE_SIZE = 100*1024;
+        if(imageFile.size > MAX_IMAGE_SIZE){
+            return res.status(400).json({error: "Image size exceeds 100 KB limit"});
+        }
 
         const imageUpload = await cloudinary.uploader.upload(imageFile.tempFilePath, {
             folder: 'user_images',
         });
+
+        //delete temp file after upload
+        fs.unlink(imageFile.tempFilePath, (err)=>{
+            if(err) console.error("Failed to delete temp file: ", err);
+        })
 
         const updatedUser = await Users.findByIdAndUpdate(
             userId,
@@ -82,9 +93,20 @@ export const uploadUserSignature = async (req, res) => {
       return res.status(400).json({ error: 'Signature file is required' });
     }
 
+    //check size limit : 30 KB
+    const MAX_SIGNATURE_SIZE = 30*1024;
+    if(signatureFile.size > MAX_SIGNATURE_SIZE){
+        return res.status(400).json({error: "Signature size exceeds 30 KB limit"});
+    }
+
     const signatureUpload = await cloudinary.uploader.upload(signatureFile.tempFilePath, {
       folder: 'user_signatures',
     });
+
+    //delete temp file after upload
+    fs.unlink(signatureFile.tempFilePath, (err)=>{
+        if(err) console.error("Failed to delete temp File : ", err);
+    })
 
     const updatedUser = await Users.findByIdAndUpdate(
       userId,
