@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
+import fileUpload from 'express-fileupload';
 
 import AuthRouter from './src/routes/authRoutes.js';
 
@@ -22,6 +23,10 @@ app.get('/', (req, res) => {
 //middlware
 app.use(express.json()); 
 app.use(cors());
+//for uploading files
+app.use(fileUpload({
+    useTempFiles: true
+}))
 
 //routes
 app.use('/auth', AuthRouter);
