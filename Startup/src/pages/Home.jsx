@@ -9,7 +9,7 @@ function Home() {
       {/* Background Image */}
       <div
         className="absolute inset-0 w-full h-full bg-no-repeat bg-cover bg-center opacity-95 blur-[1px]"
-        style={{ backgroundImage: "url('https://raw.githubusercontent.com/Coder-Stark/assets/refs/heads/master/frontScreen.png')" }}
+        style={{ backgroundImage: "url('https://res.cloudinary.com/doayyhpdi/image/upload/v1745470375/user_images/uwd6ei1wskatggsq8tc4.png')" }}
       ></div>
 
       {/* Content */}

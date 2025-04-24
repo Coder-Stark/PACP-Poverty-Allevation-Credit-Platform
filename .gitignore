@@ -1,6 +1,6 @@
 # Ignore node_modules for all apps
 backend/node_modules/
-
+/tmp/
 # Ignore environment files
 .env
 

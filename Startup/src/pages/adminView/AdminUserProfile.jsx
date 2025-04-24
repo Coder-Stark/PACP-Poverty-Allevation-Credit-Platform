@@ -183,10 +183,11 @@ function AdminUserProfile() {
         {/* User Profile */}
         <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">User Profile</h1>
-          
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            {/* Left Column : User info */}
-            <div className="space-y-4 text-gray-700">
+            
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+            
+            {/* Left Column: User info */}
+            <div className="space-y-4 text-gray-700 w-full md:w-1/2">
               <p><span className="font-semibold">ID:</span> {user._id}</p>
               <p><span className="font-semibold">Name:</span> {user.name}</p>
               <p><span className="font-semibold">Email:</span> {user.email}</p>
@@ -194,26 +195,29 @@ function AdminUserProfile() {
               <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
               <p><span className="font-semibold">Has FD:</span> {user.hasFD ? "Yes" : "No"}</p>
             </div>
-
-            {/* Right Column: User image */}
-            {/* Conditionally render shows images or upload image */}
-            {user.userImage ? (
-              <img 
-                src={user.userImage}
-                alt="User Image"
-                className='w-full max-w-xs mx-auto rounded-xl shadow-md'
-              />
-            ) : (
-              <div className='text-center border border-dashed border-gray-400 p-4 rounded-lg'>
-                <p className='mb-2 text-gray-500'>No User Image uploaded. </p>
-                <label className='inline-block bg-purple-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-purple-700'>
-                  Upload Image
-                  <input type='file' accept='image/*' className='hidden' onChange={handleImageUpload} />
-                </label>
+            
+            {/* Right Column: Image + Button */}
+            <div className="flex flex-col items-center w-full md:w-1/2">
+              <div className="w-60 h-60 border border-gray-300 rounded-xl flex items-center justify-center bg-white shadow-md mb-4">
+                {user.userImage ? (
+                  <img 
+                    src={user.userImage}
+                    alt="User"
+                    className="object-cover w-full h-full rounded-xl"
+                  />
+                ) : (
+                  <p className="text-gray-500 text-center">No User Image uploaded.</p>
+                )}
               </div>
-            )}
+              
+              <label className="bg-purple-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-purple-700">
+                {user.userImage ? "Update Image" : "Upload Image"}
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              </label>
+            </div>
           </div>
         </div>
+
 
         <h1 className="text-3xl font-bold text-center mb-8">Deposites</h1>        
 
