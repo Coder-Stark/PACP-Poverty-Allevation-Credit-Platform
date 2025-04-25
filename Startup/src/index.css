@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Default (Light Mode) Styles */
+body {
+  background-color: #ffffff; /* Light background */
+  color: #000000; /* Dark text */
+}
+
+/* Dark Mode Styles */
+body.dark {
+  background-color: #1f2937; /* Dark gray background */
+  /* color: #ffffff;  */
+}
+
+body.dark .header{
+  color: white;
+}

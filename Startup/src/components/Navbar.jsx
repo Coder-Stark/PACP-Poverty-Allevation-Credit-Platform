@@ -1,9 +1,12 @@
 import { useContext} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
+import ThemeContext from "../context/ThemeContext";
+import { Sun, Moon } from 'lucide-react';
 
 function Navbar() {
   const {isLoggedIn, role, logout} = useContext(AuthContext);
+  const {theme, toggleTheme} = useContext(ThemeContext);
   const navigate = useNavigate();
 
   const handleLogout = ()=>{
@@ -47,14 +50,29 @@ function Navbar() {
           )}
         </nav>
 
-        {/* Login Button */}
-        <div className="absolute top-2 right-4 md:static md:ml-auto">
+        {/* Button Container */}
+        <div className="absolute top-2 right-4 md:static md:ml-auto flex items-center gap-2">
+
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="text-purple-500 dark:text-white hover:text-purple-600 transition duration-300"
+          >
+            <span title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}>
+              {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+            </span>
+          </button>
+
+          {/* Login / Logout Button */}
           {
             isLoggedIn ? (
-              <button onClick={handleLogout} className="bg-red-500 text-white sm:px-4 sm:py-2 px-2 py-1 text-sm sm:text-base rounded-lg flex items-center gap-2 hover:bg-red-600 transition duration-300 cursor-pointer">
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white sm:px-4 sm:py-2 px-2 py-1 text-sm sm:text-base rounded-lg flex items-center gap-2 hover:bg-red-600 transition duration-300 cursor-pointer"
+              >
                 LogOut →
               </button>
-            ):(
+            ) : (
               <Link to="/login">
                 <button className="bg-purple-500 text-white sm:px-4 sm:py-2 px-2 py-1 text-sm sm:text-base rounded-lg flex items-center gap-2 hover:bg-purple-600 transition duration-300 cursor-pointer">
                   Login →
@@ -63,6 +81,7 @@ function Navbar() {
             )
           }
         </div>
+        
       </div>
     </header>
   );
