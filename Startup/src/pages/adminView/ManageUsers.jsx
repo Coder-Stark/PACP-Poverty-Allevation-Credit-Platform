@@ -35,18 +35,18 @@ function ManageUsers() {
     user.phone.includes(search)
   )
   return (
-    <section className="text-gray-600 body-font">
+    <section className="body-font">
       <div className="container px-5 py-10 mx-auto">
 
         <div className="flex flex-col text-center w-full mb-8">
-          <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">All Members</h1>
+          <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4">All Members</h1>
         </div>
 
         {/* search  */}
         <div className='mb-6'>
           <input 
             type='text'
-            className='w-full p-2 border border-gray-300 rounded'
+            className='w-full p-2 border text-white border-gray-300 rounded'
             placeholder='Search by name, email or phone'
             value={search}
             onChange={(e)=>setSearch(e.target.value)}
@@ -62,7 +62,7 @@ function ManageUsers() {
                   <img alt="user" className="w-16 h-16 bg-gray-100 object-cover object-center flex-shrink-0 rounded-full mr-4" 
                   src="https://dummyimage.com/80x80" />
                   <div className='flex-grow'>
-                    <h2 className='text-gray-900 title-font font-medium'>{user.name}</h2>
+                    <h2 className='title-font font-medium'>{user.name}</h2>
                     <p className='text-gray-500'>{user.email}</p>
                     <p className='text-gray-500'>{user.phone}</p>
                     </div>

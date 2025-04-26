@@ -181,13 +181,13 @@ function AdminUserProfile() {
     return (
       <div className="p-8 space-y-8">
         {/* User Profile */}
-        <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">User Profile</h1>
+        <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6 border-b pb-2">User Profile</h1>
             
           <div className="flex flex-col md:flex-row justify-between items-start gap-8">
             
             {/* Left Column: User info */}
-            <div className="space-y-4 text-gray-700 w-full md:w-1/2">
+            <div className="space-y-4 w-full md:w-1/2">
               <p><span className="font-semibold">ID:</span> {user._id}</p>
               <p><span className="font-semibold">Name:</span> {user.name}</p>
               <p><span className="font-semibold">Email:</span> {user.email}</p>
@@ -224,9 +224,9 @@ function AdminUserProfile() {
         <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
           {/* Conditionally Render RD Update or Create RD */}
           {user?.hasRD ? (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
-              <div className="space-y-4 text-gray-700">
+            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
+              <div className="space-y-4">
                 <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
                 <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
                 <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
@@ -250,9 +250,9 @@ function AdminUserProfile() {
               </div>
             </div>
           ) : (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
-              <div className="space-y-4 text-gray-700">
+            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
+              <div className="space-y-4">
                 <div>
                   <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
                   <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
@@ -272,9 +272,9 @@ function AdminUserProfile() {
 
           {/* Conditionally Render FD Update or Create FD */}
           {user?.hasFD ? (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Fixed Deposit (FD)</h2>
-              <div className="space-y-4 text-gray-700">
+            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Fixed Deposit (FD)</h2>
+              <div className="space-y-4">
                 <p><span className="font-semibold">Application No:</span> {fd?.applicationNumber}</p>
                 <p><span className="font-semibold">Invested Amount:</span> ₹{fd?.depositAmount}</p>
                 <p><span className="font-semibold">Maturity Amount:</span> ₹{fd?.maturityAmount}</p>
@@ -285,9 +285,9 @@ function AdminUserProfile() {
               </div>
             </div>
           ) : (
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
-              <div className="space-y-4 text-gray-700">
+            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
+              <div className="space-y-4">
                 <div>
                   <label className="block font-semibold mb-1">Amount(₹):</label>
                   <input type="number" placeholder="Enter Fixed Deposite Amount" className="w-full p-2 border rounded-lg" 
