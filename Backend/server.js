@@ -9,6 +9,7 @@ import AuthRouter from './src/routes/authRoutes.js';
 import adminRoutes from './src/routes/adminRoutes.js';
 import rdRoutes from './src/routes/rdRoutes.js';
 import fdRoutes from './src/routes/fdRoutes.js';
+import loanRoutes from './src/routes/loanRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -35,7 +36,7 @@ app.use('/auth', AuthRouter);
 app.use('/api/admin', adminRoutes);
 app.use('/api/finance/rd', rdRoutes);          //RD, FD, Loan
 app.use('/api/finance/fd', fdRoutes);
-
+app.use('/api/finance/loan', loanRoutes);
 
 //should always place for not defined pages
 app.use((req, res) => {
