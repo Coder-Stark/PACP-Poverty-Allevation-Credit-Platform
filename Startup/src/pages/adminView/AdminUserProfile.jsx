@@ -15,6 +15,10 @@ function AdminUserProfile() {
     const [fd, setFD] = useState(null);
     const [fdAmount, setFDAmount] = useState('');
     const [fdTenure, setFDTenure] = useState('');
+
+    //loan details
+    const [laon, setLoan] = useState(null);
+    const [loanAmount, setLoanAmount] = useState('');
     
     const fetchUser = async()=>{
       try{
@@ -50,6 +54,17 @@ function AdminUserProfile() {
           setFD(null);
           setFDAmount('');
           setFDTenure('');
+        }
+
+        //if user has Loan, fetch Loan from LoanModel
+        if(userRes.data.hasLoan){
+          const loanRes = await axiox.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/${userRes.data._id}`,{
+            headers: {Authorization: `Bearer ${token}`}
+          });
+          setLoan(loanRes.data);
+        }else{
+          setLoan(null);
+          setLoanAmount('');
         }
 
       }catch(error){
@@ -194,6 +209,7 @@ function AdminUserProfile() {
               <p><span className="font-semibold">Phone:</span> {user.phone}</p>
               <p><span className="font-semibold">Has RD:</span> {user.hasRD ? "Yes" : "No"}</p>
               <p><span className="font-semibold">Has FD:</span> {user.hasFD ? "Yes" : "No"}</p>
+              <p><span className="font-semibold">Has Loan:</span> {user.hasLoan ? "Yes" : "No"}</p>
             </div>
             
             {/* Right Column: Image + Button */}

@@ -77,3 +77,91 @@ export const createLoan = async(req, res)=>{
         res.status(500).json({message: "Error Creating Loan", error: error.message});
     }
 }
+
+
+let LATE_FINE_PER_DAY = 50;
+
+//pay emi with late fee calculation
+export const payEMI = async(req, res)=>{
+    try{
+        const {userId} = req.params;
+        const {paymentDate, amountPaid, mode = 'cash', remarks = ''} = req.body;
+
+        const loan = await Loan.findOne({userId});
+        if(!loan) return res.status(404).json({message: "Loan not Found"});
+
+        //find first unpaid EMI
+        const repayment = loan.repaymentSchedule.find(r => r.status === 'due');
+        if(!repayment) return res.status(400).json({message: "All EMIs are already paid"});
+
+        const now = paymentDate ? new Date(paymentDate) : new Date();
+        const due = new Date(repayment.dueDate);
+
+        let lateFee = 0;
+        if(now > due){
+            const diffDays = Math.ceil((now - due) / (1000*60*60*24));
+            lateFee = diffDays*LATE_FINE_PER_DAY;
+        }
+
+        //generate receipt number 
+        const receiptNumber = `REC-${Date.now()}`;
+
+        //update repayment schedule entry
+        repayment.status = 'paid';
+        repayment.amountPaid = amountPaid;
+        repayment.paidDate = now;
+        repayment.lateFee = lateFee;
+
+        //record the payment seperately
+        loan.payments.push({
+            paymentDate: now,
+            amountPaid,
+            mode,
+            receiptNumber,
+            remarks
+        })
+
+        const allPaid = loan.repaymentSchedule.every(r => r.status === 'paid');
+        if(allPaid) loan.status = 'completed';
+
+        await loan.save();
+
+        res.status(200).json({message: "EMI Payment Successful", 
+                            paymentDetails:{              //just for confirmation for backend (not storing)
+                                paidDate: now,
+                                amountPaid,
+                                lateFee,
+                                mode,
+                                receiptNumber
+                            }})
+    }catch(error){
+        console.error(error);
+        res.status(500).json({message: "Error Paying EMI", error : error.message});
+    }
+} 
+
+//get loan by user
+export const getUserLoan = async(req, res)=>{
+    try{
+        const {userId} = req.params;
+        const loan = await Loan.findOne({userId});
+        if(!loan) return res.status(400).json({message: "No Loan Found"});
+
+        res.status(200).json(loan);
+    }catch(error){
+        res.status(500).json({message: "Error Fetching Loan by User ID", error : error.message});
+    }
+}
+
+//get loan by application number
+export const getLoanByApplicationNumber = async(req, res)=>{
+    try{
+        const {loanApplicationNumber} = req.params;
+        const loan = await Loan.findOne({loanApplicationNumber});
+        if(!loan) return res.status(404).json({message: "No Loan Found"});
+
+        res.status(200).json(loan);
+    }catch(error){
+        res.status(500).json({message: "Error Fetching Loan by Loan Application Number", error: error.message});
+    }
+}

@@ -56,7 +56,7 @@ function Navbar() {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="text-purple-500 hover:text-purple-600 transition duration-300"
+            className="text-purple-500 hover:text-purple-600 transition duration-300 cursor-pointer"
           >
             <span title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}>
               {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}

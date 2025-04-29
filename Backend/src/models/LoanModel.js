@@ -20,7 +20,7 @@ const loanSchema = new mongoose.Schema({
     city: String,
     pincode: String,
     ownedOrRented: String,
-    dob: String,
+    dob: Date,
     age: Number,
     photo: String,
     signature: String
