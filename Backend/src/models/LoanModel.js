@@ -87,10 +87,6 @@ const loanSchema = new mongoose.Schema({
     }
   ],
 
-  // Loan approval and disbursement dates
-  approvedDate: Date,
-  disbursedDate: Date,
-
   // Late Fees / Penalty Charges
   lateFeesPenalty: {
     amount: { type: Number, default: 0 },
@@ -102,13 +98,6 @@ const loanSchema = new mongoose.Schema({
     type: String, // e.g., property, vehicle
     details: String,
     value: Number
-  },
-
-  // Loan Disbursement Details
-  disbursementDetails: {
-    bankAccountNumber: String,
-    accountHolderName: String,
-    bankName: String
   },
 
   // Repayment Method (auto-debit or manual)

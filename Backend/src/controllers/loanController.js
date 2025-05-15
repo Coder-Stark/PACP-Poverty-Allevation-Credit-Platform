@@ -84,10 +84,10 @@ let LATE_FINE_PER_DAY = 50;
 //pay emi with late fee calculation
 export const payEMI = async(req, res)=>{
     try{
-        const {userId} = req.params;
+        const {userId, loanId} = req.params;
         const {paymentDate, amountPaid, mode = 'cash', remarks = ''} = req.body;
 
-        const loan = await Loan.findOne({userId});
+        const loan = await Loan.findOne({userId, _id: loanId});
         if(!loan) return res.status(404).json({message: "Loan not Found"});
 
         //find first unpaid EMI
@@ -141,15 +141,15 @@ export const payEMI = async(req, res)=>{
 } 
 
 //get loan by user
-export const getUserLoan = async(req, res)=>{
+export const getUserLoans = async(req, res)=>{
     try{
         const {userId} = req.params;
-        const loan = await Loan.findOne({userId});
-        if(!loan) return res.status(400).json({message: "No Loan Found"});
-
-        res.status(200).json(loan);
+        const loans = await Loan.find({userId}).sort({createdAt: -1});       //newest first
+        
+        if(loans.length === 0) return res.status(404).json({message: "No loans found for this user"});
+        res.status(200).json(loans);
     }catch(error){
-        res.status(500).json({message: "Error Fetching Loan by User ID", error : error.message});
+        res.status(500).json({message: "Error Fetching Loans by User ID", error : error.message});
     }
 }
 

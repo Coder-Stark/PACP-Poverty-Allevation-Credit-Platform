@@ -17,8 +17,8 @@ function AdminUserProfile() {
     const [fdTenure, setFDTenure] = useState('');
 
     //loan details
-    const [laon, setLoan] = useState(null);
-    const [loanAmount, setLoanAmount] = useState('');
+    const [loan, setLoan] = useState(null);
+    const [emiAmount, setEmiAmount] = useState('');
     
     const fetchUser = async()=>{
       try{
@@ -58,7 +58,7 @@ function AdminUserProfile() {
 
         //if user has Loan, fetch Loan from LoanModel
         if(userRes.data.hasLoan){
-          const loanRes = await axiox.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/${userRes.data._id}`,{
+          const loanRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/${userRes.data._id}`,{
             headers: {Authorization: `Bearer ${token}`}
           });
           setLoan(loanRes.data);
@@ -125,7 +125,6 @@ function AdminUserProfile() {
         fetchUser();
       }catch(err){
         console.error("Failed to Update RD : ", err.message);
-        alert("Failed to Update RD");
       }finally{
         setLoading(false);
       }
@@ -154,6 +153,33 @@ function AdminUserProfile() {
       }catch(err){
         console.error("Failed to Create FD: ", err.message);
         handleError("Error Creating FD");
+      }finally{
+        setLoading(false);
+      }
+    }
+
+    //LOAN
+    const handlePayEMI = async()=>{
+      if(!emiAmount || emiAmount <= 0){
+        handleError("Please Enter a valid EMI amount");
+        return;
+      }
+
+      try{
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/payemi/${user._id}/${pendingLoan._id}`, {
+          amountPaid: parseFloat(emiAmount),
+        },{
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        handleSuccess("EMI Payment Successful");
+        fetchUser();
+      }catch(error){
+        console.error("Failed to Pay EMI", error.message);
+        handleError("Failed to paye EMI")
       }finally{
         setLoading(false);
       }
@@ -237,99 +263,220 @@ function AdminUserProfile() {
 
         <h1 className="text-3xl font-bold text-center mb-8">Deposites</h1>        
 
-        <div className="flex flex-col lg:flex-row gap-8 max-w-6xl mx-auto">
-          {/* Conditionally Render RD Update or Create RD */}
-          {user?.hasRD ? (
-            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Recurring Deposit (RD)</h2>
-              <div className="space-y-4">
-                <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
-                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
-                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
-                <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
-                <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
-                <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
+        <div className="flex flex-col gap-8 max-w-6xl mx-auto">
           
-                <div>
-                  <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                  <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
-                    value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
-                  />
+          {/* Recurring Deposite (RD)  */}
+          <details className='border border-gray-300 shadow-lg rounded-2xl p-8 w-full'>
+            <summary className='text-2xl font-bold mb-4 cursor-pointer'>
+                {user?.hasRD ? "Recurring Deposite (RD) - Update ":  "Create Recurring Deposite (RD) "}
+            </summary>
+            
+          <div className='space-y-4 mt-4'>
+            {/* Conditionally Render RD Update or Create RD */}
+            {user?.hasRD ? (
+              <>
+                <div className="space-y-4">
+                  <p><span className="font-semibold">Application No:</span> {rd?.applicationNumber}</p>
+                  <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd?.totalInvestedAmount}</p>
+                  <p><span className="font-semibold">Current Investment Value:</span> ₹{rd?.currentInvestmentValue}</p>
+                  <p><span className="font-semibold">Amount Per Month</span> ₹{rd?.amountPerMonth}</p>
+                  <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd?.lastDepositeDate).toLocaleDateString()}</p>
+                  <p><span className="font-semibold">Total Deposited RDs:</span> {rd?.rdCount}</p>
+            
+                  <div>
+                    <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                    <input type="number" placeholder="Enter monthly amount" className="w-full p-2 border rounded-lg" 
+                      value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-end space-x-4 mt-6">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleUpdateRd}
-                >
-                  Update RD
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
-              <div className="space-y-4">
+                <div className="flex justify-end space-x-4 mt-6">
+                  <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                    onClick={handleUpdateRd}
+                    >
+                    Update RD
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
                 <div>
                   <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
                   <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg" 
                     value={amountPerMonth} onChange={(e)=> setAmountPerMonth(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleCreateRd}
-                >
-                  Create RD
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Conditionally Render FD Update or Create FD */}
-          {user?.hasFD ? (
-            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Fixed Deposit (FD)</h2>
-              <div className="space-y-4">
-                <p><span className="font-semibold">Application No:</span> {fd?.applicationNumber}</p>
-                <p><span className="font-semibold">Invested Amount:</span> ₹{fd?.depositAmount}</p>
-                <p><span className="font-semibold">Maturity Amount:</span> ₹{fd?.maturityAmount}</p>
-                <p><span className="font-semibold">Interest Rate:</span> {fd?.interestRate} %</p>
-                <p><span className="font-semibold">Tenure (Months):</span> {fd?.tenureInMonths}</p>
-                <p><span className="font-semibold">Start Date:</span> {new Date(fd?.startDate).toLocaleDateString()}</p>
-                <p><span className="font-semibold">Maturity Date:</span> {new Date(fd?.maturityDate).toLocaleDateString()}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
-              <h2 className="text-2xl font-bold mb-4 border-b pb-2">Create Recurring Deposit (RD)</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block font-semibold mb-1">Amount(₹):</label>
-                  <input type="number" placeholder="Enter Fixed Deposite Amount" className="w-full p-2 border rounded-lg" 
-                    value={fdAmount} onChange={(e)=> setFDAmount(e.target.value)}
-                  />
+                <div className="flex justify-end mt-6">
+                  <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                    onClick={handleCreateRd}
+                    >
+                    Create RD
+                  </button>
                 </div>
-                <div>
-                  <label className="block font-semibold mb-1">Tenure (in Months):</label>
-                  <input type="number" placeholder="Enter Fixed Deposite Tenure" className="w-full p-2 border rounded-lg" 
-                    value={fdTenure} onChange={(e)=> setFDTenure(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mt-6">
-                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                  onClick={handleCreateFd}
-                >
-                  Create FD
-                </button>
-              </div>
-            </div>
-          )}
+              </>
+            )}
+          </div>
+          </details>
 
+          {/* Fixed Deposit (FD) */}
+          <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+            <summary className="text-2xl font-bold mb-4 cursor-pointer">
+              {user?.hasFD ? "Fixed Deposit (FD) - View" : "Create Fixed Deposit (FD)"}
+            </summary>
+
+            <div className="space-y-4 mt-4">
+              {user?.hasFD ? (
+                <>
+                  <p><span className="font-semibold">Application No:</span> {fd?.applicationNumber}</p>
+                  <p><span className="font-semibold">Invested Amount:</span> ₹{fd?.depositAmount}</p>
+                  <p><span className="font-semibold">Maturity Amount:</span> ₹{fd?.maturityAmount}</p>
+                  <p><span className="font-semibold">Interest Rate:</span> {fd?.interestRate}%</p>
+                  <p><span className="font-semibold">Tenure (Months):</span> {fd?.tenureInMonths}</p>
+                  <p><span className="font-semibold">Start Date:</span> {new Date(fd?.startDate).toLocaleDateString()}</p>
+                  <p><span className="font-semibold">Maturity Date:</span> {new Date(fd?.maturityDate).toLocaleDateString()}</p>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block font-semibold mb-1">Amount (₹):</label>
+                    <input type="number" className="w-full p-2 border rounded-lg" placeholder="Enter Fixed Deposit Amount"
+                      value={fdAmount} onChange={(e) => setFDAmount(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-semibold mb-1">Tenure (in Months):</label>
+                    <input type="number" className="w-full p-2 border rounded-lg" placeholder="Enter Tenure"
+                      value={fdTenure} onChange={(e) => setFDTenure(e.target.value)}
+                    />
+                  </div>
+              
+                  <div className="flex justify-end mt-6">
+                    <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold"
+                      onClick={handleCreateFd}
+                    >
+                      Create FD
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </details>
+            
         </div>
+            
+        <h1 className="text-3xl font-bold text-center mb-8">Credits</h1>  
 
-        <h1 className="text-3xl font-bold text-center mb-8">Credits</h1>        
+        <div className="flex flex-col gap-8 max-w-6xl mx-auto">
+          {(() => {
+            const pendingLoan = loan?.find(l => l.status === 'pending');
+            const completedLoans = loan?.filter(l => l.status === 'completed') || [];
+            const hasLoan = loan?.length > 0;
+          
+            // 1. PENDING LOAN CARD
+            if (pendingLoan) {
+              return (
+                <>
+                  {/* Card 1: Pending Loan */}
+                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                    <summary className="text-2xl font-bold mb-4 cursor-pointer">Loan Details (Pending)</summary>
+                    <div className="space-y-4 mt-4">
+                      <p><span className="font-semibold">Application No:</span> {pendingLoan.loanApplicationNumber}</p>
+                      <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toISOString().split('T')[0]}</p>
+                      <p><span className="font-semibold">Loan Amount:</span> ₹{pendingLoan.amount}</p>
+                      <p><span className="font-semibold">Interest Rate:</span> {pendingLoan.interestRate}%</p>
+                      <p><span className="font-semibold">Total Duration (in Months) :</span> {pendingLoan.tenureInMonths}</p>
+                      <p><span className="font-semibold">Loan Type :</span> {pendingLoan.loanType}</p>
+                      <p><span className="font-semibold">EMI Per Month:</span> ₹{pendingLoan.repaymentSchedule?.[0]?.amountDue || 0}</p>
+                      <p><span className="font-semibold">Next Due Date:</span> {
+                        pendingLoan.repaymentSchedule?.find(r => r.status === 'due')?.dueDate
+                          ? new Date(pendingLoan.repaymentSchedule.find(r => r.status === 'due')?.dueDate).toLocaleDateString()
+                          : 'All EMIs Paid'
+                      }</p>
+                      <div>
+                        <label className="block font-semibold mb-1">Pay EMI (₹):</label>
+                        <input type="number" placeholder="Enter EMI amount" className="w-full p-2 border rounded-lg"
+                          value={emiAmount} onChange={(e) => setEmiAmount(e.target.value)}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-4 mt-6">
+                        <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                          onClick={handlePayEMI}
+                        >
+                          Pay EMI
+                        </button>
+                      </div>
+                    </div>
+                  </details>
+                    
+                  {/* Card 2: Completed Loans */}
+                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                    <summary className="text-2xl font-bold mb-4 cursor-pointer">Completed Loan(s)</summary>
+                    <div className="space-y-4 mt-4">
+                      {completedLoans.length > 0 ? (
+                        completedLoans.map((l, idx) => (
+                          <div key={idx} className="border p-4 rounded-lg bg-gray-50">
+                            <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
+                            <p><span className="font-semibold">Loan Amount:</span> ₹{l.amount}</p>
+                            <p><span className="font-semibold">Interest Rate:</span> {l.interestRate}%</p>
+                            <p className="text-green-600 font-semibold">All EMIs Paid</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No completed loans yet.</p>
+                      )}
+                    </div>
+                  </details>
+                </>
+              );
+            }
+          
+            // NO PENDING LOANS → Render Completed + Create Loan Cards
+            return (
+              <>
+                {/* Card 2: Completed Loans or Message */}
+                <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                  <summary className="text-2xl font-bold mb-4 cursor-pointer">Completed Loan(s)</summary>
+                  <div className="space-y-4 mt-4">
+                    {completedLoans.length > 0 ? (
+                      completedLoans.map((l, idx) => (
+                        <div key={idx} className="border p-4 rounded-lg bg-gray-50">
+                          <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
+                          <p><span className="font-semibold">Loan Amount:</span> ₹{l.amount}</p>
+                          <p><span className="font-semibold">Interest Rate:</span> {l.interestRate}%</p>
+                          <p className="text-green-600 font-semibold">All EMIs Paid</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No completed loans yet.</p>
+                    )}
+                  </div>
+                </details>
+                  
+                {/* Card 3: Create Loan */}
+                <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                  <summary className="text-2xl font-bold mb-4 cursor-pointer">Create New Loan</summary>
+                  <div className="space-y-4 mt-4">
+                    <div>
+                      <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
+                      <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg"
+                        value={amountPerMonth} onChange={(e) => setAmountPerMonth(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex justify-end mt-6">
+                      <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                        onClick={handleCreateRd}
+                      >
+                        Create Loan
+                      </button>
+                    </div>
+                  </div>
+                </details>
+              </>
+            );
+          })()}
+        </div>
+        
+
       </div>
     )
 }
