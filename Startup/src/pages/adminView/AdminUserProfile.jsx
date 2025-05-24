@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import { handleSuccess, handleError } from '../../utils';
 
@@ -61,7 +61,9 @@ function AdminUserProfile() {
           const loanRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/${userRes.data._id}`,{
             headers: {Authorization: `Bearer ${token}`}
           });
-          setLoan(loanRes.data);
+          const loanData = Array.isArray(loanRes.data) ? loanRes.data : [loanRes.data];
+          // setLoan(loanRes.data);
+          setLoan(loanData);
         }else{
           setLoan(null);
           setLoanAmount('');
@@ -75,6 +77,39 @@ function AdminUserProfile() {
     useEffect(()=>{
       fetchUser();
     }, [id]);
+
+    
+    const handleImageUpload = async(e)=>{
+      const file = e.target.files[0];
+      if(!file) return;
+
+      //check max file size is 100kb (100*1024)
+      if(file.size > 102400){
+        handleError("File  Size must be less than 100 KB");
+        return;
+      }
+
+      //upload file
+      const formData = new FormData();
+      formData.append("userImage", file);
+      formData.append("userId", user._id);
+      try{
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/upload-user-image`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if(res.ok){
+          handleSuccess("Image Uploaded Successfully");
+          fetchUser();           //refresh
+        }else{
+          handleError("Failed to upload Image");
+        }
+      }catch(error){
+        console.error("Error uploading Image : ", error);
+        handleError("Something went wrong. Please try again");
+      }
+    }
 
     //valid detail enters
     const validateInputs = ()=>{
@@ -159,16 +194,26 @@ function AdminUserProfile() {
     }
 
     //LOAN
+    const handleCreateLoan = async()=>{
+      handleSuccess("Fill the Loan Details using PostMan");
+    }
+
     const handlePayEMI = async()=>{
       if(!emiAmount || emiAmount <= 0){
         handleError("Please Enter a valid EMI amount");
+        return;
+      }
+      const pendingLoan = loan?.find(l => l.status === 'pending');
+      if(!pendingLoan || !pendingLoan._id){
+        handleError("No Pending Loan Found");
         return;
       }
 
       try{
         setLoading(true);
         const token = localStorage.getItem('token');
-        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/payemi/${user._id}/${pendingLoan._id}`, {
+        
+        await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/finance/loan/payemi/${id}/${pendingLoan._id}`, {
           amountPaid: parseFloat(emiAmount),
         },{
           headers: {
@@ -179,41 +224,9 @@ function AdminUserProfile() {
         fetchUser();
       }catch(error){
         console.error("Failed to Pay EMI", error.message);
-        handleError("Failed to paye EMI")
+        handleError("Failed to pay EMI")
       }finally{
         setLoading(false);
-      }
-    }
-
-    const handleImageUpload = async(e)=>{
-      const file = e.target.files[0];
-      if(!file) return;
-
-      //check max file size is 100kb (100*1024)
-      if(file.size > 102400){
-        handleError("File  Size must be less than 100 KB");
-        return;
-      }
-
-      //upload file
-      const formData = new FormData();
-      formData.append("userImage", file);
-      formData.append("userId", user._id);
-      try{
-        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/admin/upload-user-image`, {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        if(res.ok){
-          handleSuccess("Image Uploaded Successfully");
-          fetchUser();           //refresh
-        }else{
-          handleError("Failed to upload Image");
-        }
-      }catch(error){
-        console.error("Error uploading Image : ", error);
-        handleError("Something went wrong. Please try again");
       }
     }
 
@@ -407,29 +420,9 @@ function AdminUserProfile() {
                       </div>
                     </div>
                   </details>
-                    
-                  {/* Card 2: Completed Loans */}
-                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
-                    <summary className="text-2xl font-bold mb-4 cursor-pointer">Completed Loan(s)</summary>
-                    <div className="space-y-4 mt-4">
-                      {completedLoans.length > 0 ? (
-                        completedLoans.map((l, idx) => (
-                          <div key={idx} className="border p-4 rounded-lg bg-gray-50">
-                            <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
-                            <p><span className="font-semibold">Loan Amount:</span> ₹{l.amount}</p>
-                            <p><span className="font-semibold">Interest Rate:</span> {l.interestRate}%</p>
-                            <p className="text-green-600 font-semibold">All EMIs Paid</p>
-                          </div>
-                        ))
-                      ) : (
-                        <p>No completed loans yet.</p>
-                      )}
-                    </div>
-                  </details>
                 </>
               );
             }
-          
             // NO PENDING LOANS → Render Completed + Create Loan Cards
             return (
               <>
@@ -456,15 +449,9 @@ function AdminUserProfile() {
                 <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
                   <summary className="text-2xl font-bold mb-4 cursor-pointer">Create New Loan</summary>
                   <div className="space-y-4 mt-4">
-                    <div>
-                      <label className="block font-semibold mb-1">Amount Per Month (₹):</label>
-                      <input type="number" placeholder="Enter new Monthly amount" className="w-full p-2 border rounded-lg"
-                        value={amountPerMonth} onChange={(e) => setAmountPerMonth(e.target.value)}
-                      />
-                    </div>
                     <div className="flex justify-end mt-6">
                       <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
-                        onClick={handleCreateRd}
+                        onClick={handleCreateLoan}
                       >
                         Create Loan
                       </button>

@@ -11,7 +11,7 @@ function Services() {
 
           <div className="p-4 md:w-1/3">
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
-              <img className="lg:h-48 md:h-36 w-full object-cover object-center" src="https://dummyimage.com/720x400" alt="blog" />
+              <img className="w-80 h-85 p-5 justify-self-center object-cover object-center" src="https://res.cloudinary.com/doayyhpdi/image/upload/v1748062326/Screenshot_2025-05-24_102153_mparqf.png" alt="blog" />
               <div className="p-6">
                 <h2 className="tracking-widest text-xl flex justify-center title-font font-extrabold mb-1">
                   Recurring Deposit (RD)
@@ -26,7 +26,7 @@ function Services() {
 
           <div className="p-4 md:w-1/3">
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
-              <img className="lg:h-48 md:h-36 w-full object-cover object-center" src="https://dummyimage.com/721x401" alt="blog"/>
+              <img className="w-80 h-85 p-5 justify-self-center object-cover object-center" src="https://res.cloudinary.com/doayyhpdi/image/upload/v1748062282/Screenshot_2025-05-24_102108_yvfhrg.png" alt="blog"/>
               <div className="p-6">
                 <h2 className="tracking-widest text-xl flex justify-center title-font font-extrabold mb-1">
                   Fixed Deposit (FD)
@@ -50,7 +50,7 @@ function Services() {
 
           <div className="p-4 md:w-1/3">
             <div className="h-full border-2 border-gray-300 border-opacity-60 rounded-lg overflow-hidden">
-              <img className="lg:h-48 md:h-36 w-full object-cover object-center" src="https://dummyimage.com/722x402" alt="blog"/>
+              <img className="w-80 h-85 p-5 object-cover object-center" src="https://res.cloudinary.com/doayyhpdi/image/upload/v1748062249/Screenshot_2025-05-24_102026_bnlnrh.png" alt="blog"/>
               <div className="p-6">
                 <h2 className="tracking-widest text-xl flex justify-center title-font font-extrabold mb-1">
                   Personal Loans

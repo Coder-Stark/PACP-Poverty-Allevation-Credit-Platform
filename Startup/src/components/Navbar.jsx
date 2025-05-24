@@ -26,7 +26,7 @@ function Navbar() {
               className="w-12 h-12 rounded-full shadow-lg"
             />
           </Link>
-          <span className="text-xl text-black ml-2 md:ml-3 text-center md:text-left">StartUp</span>
+          <span className="text-xl text-black ml-2 md:ml-3 text-center md:text-left">PACP</span>
         </div>
 
         {/* Navigation Links (Centered on All Screens) */}
