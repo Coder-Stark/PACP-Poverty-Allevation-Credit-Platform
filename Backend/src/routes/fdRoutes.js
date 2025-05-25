@@ -5,7 +5,7 @@ import {createFD, getUserFD, getFDByApplicationNumber} from '../controllers/fdCo
 const router = express.Router();
 
 router.post('/create', authMiddleware, isAdmin, createFD);
-router.get('/:userId', authMiddleware, isAdmin, getUserFD);
+router.get('/:userId', authMiddleware, getUserFD);
 router.get('/app/:applicationNumber', authMiddleware, isAdmin, getFDByApplicationNumber);
 
 

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/create', authMiddleware, isAdmin, createLoan);
 router.put('/payemi/:userId/:loanId', authMiddleware, isAdmin, payEMI);
-router.get('/:userId', authMiddleware, isAdmin, getUserLoans);
+router.get('/:userId', authMiddleware, getUserLoans);
 router.get('/app/:loanApplicationNumber', authMiddleware, isAdmin, getLoanByApplicationNumber);
 
 export default router;
