@@ -85,16 +85,26 @@ function PortFolio() {
         {rd && (
           <div className="border rounded-xl p-6 shadow">
             <h2 className="text-xl font-bold mb-2">Recurring Deposit (RD)</h2>
-            <p><strong>Amount Per Month:</strong> ₹{rd.amountPerMonth}</p>
-            <p><strong>Start Date:</strong> {new Date(rd.createdAt).toLocaleDateString()}</p>
+              <p><span className="font-semibold">Application No:</span> {rd.applicationNumber}</p>
+              <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd.totalInvestedAmount}</p>
+              <p><span className="font-semibold">Current Investment Value:</span> ₹{rd.currentInvestmentValue}</p>
+              <p><span className="font-semibold">Amount Per Month</span> ₹{rd.amountPerMonth}</p>
+              <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd.lastDepositeDate).toLocaleDateString()}</p>
+              <p><span className="font-semibold">Total Deposited RDs:</span> {rd.rdCount}</p>
+            
           </div>
         )}
 
         {fd && (
           <div className="border rounded-xl p-6 shadow">
             <h2 className="text-xl font-bold mb-2">Fixed Deposit (FD)</h2>
-            <p><strong>Amount:</strong> ₹{fd.depositAmount}</p>
-            <p><strong>Tenure:</strong> {fd.tenureInMonths} months</p>
+              <p><span className="font-semibold">Application No:</span> {fd.applicationNumber}</p>
+              <p><span className="font-semibold">Invested Amount:</span> ₹{fd.depositAmount}</p>
+              <p><span className="font-semibold">Maturity Amount:</span> ₹{fd.maturityAmount}</p>
+              <p><span className="font-semibold">Interest Rate:</span> {fd.interestRate}%</p>
+              <p><span className="font-semibold">Total Duration (in Months):</span> {fd.tenureInMonths}</p>
+              <p><span className="font-semibold">Start Date:</span> {new Date(fd.startDate).toLocaleDateString()}</p>
+              <p><span className="font-semibold">Maturity Date:</span> {new Date(fd.maturityDate).toLocaleDateString()}</p>
           </div>
         )}
 
@@ -104,6 +114,7 @@ function PortFolio() {
             <h2 className="text-xl font-bold mb-2">Loan Details</h2>
             {loan.map((l, i) => (
               <div key={i} className="mb-4 border-b pb-2">
+                <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
                 <p><strong>Status:</strong> {l.status}</p>
                 <p><strong>Loan Disbursment Date:</strong> {
                   l.applicationDate
@@ -112,13 +123,18 @@ function PortFolio() {
                 }</p>
                 <p><strong>Loan Amount:</strong> ₹{l.amount}</p>
                 <p><strong>Interest Rate:</strong> {l.interestRate}%</p>
-                <p><strong>Tenure:</strong> {l.tenureInMonths} months</p>
+                <p><strong>Total Duration (in Months):</strong> {l.tenureInMonths} months</p>
                 <p><strong>Loan Type:</strong> {l.loanType}</p>
                 <p><strong>EMI:</strong> ₹{l.repaymentSchedule?.[0]?.amountDue || 'N/A'}</p>
                 <p><strong>Next Due Date:</strong> {
                   l.repaymentSchedule?.find(r => r.status === 'due')?.dueDate
                     ? new Date(l.repaymentSchedule.find(r => r.status === 'due')?.dueDate).toLocaleDateString()
                     : 'All EMIs Paid'
+                }</p>
+                <p><span className='font-semibold'>EMIs Left : </span>{
+                        l.repaymentSchedule 
+                        ? l.repaymentSchedule.filter(r => r.status === 'due').length 
+                        : 0
                 }</p>
               </div>
             ))}

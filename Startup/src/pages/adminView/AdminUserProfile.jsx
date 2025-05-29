@@ -344,7 +344,7 @@ function AdminUserProfile() {
                   <p><span className="font-semibold">Invested Amount:</span> ₹{fd?.depositAmount}</p>
                   <p><span className="font-semibold">Maturity Amount:</span> ₹{fd?.maturityAmount}</p>
                   <p><span className="font-semibold">Interest Rate:</span> {fd?.interestRate}%</p>
-                  <p><span className="font-semibold">Tenure (Months):</span> {fd?.tenureInMonths}</p>
+                  <p><span className="font-semibold">Total Duration (in Months):</span> {fd?.tenureInMonths}</p>
                   <p><span className="font-semibold">Start Date:</span> {new Date(fd?.startDate).toLocaleDateString()}</p>
                   <p><span className="font-semibold">Maturity Date:</span> {new Date(fd?.maturityDate).toLocaleDateString()}</p>
                 </>
@@ -394,17 +394,24 @@ function AdminUserProfile() {
                     <summary className="text-2xl font-bold mb-4 cursor-pointer">Loan Details (Pending)</summary>
                     <div className="space-y-4 mt-4">
                       <p><span className="font-semibold">Application No:</span> {pendingLoan.loanApplicationNumber}</p>
-                      <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toISOString().split('T')[0]}</p>
+                      <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toLocaleDateString()}</p>
                       <p><span className="font-semibold">Loan Amount:</span> ₹{pendingLoan.amount}</p>
                       <p><span className="font-semibold">Interest Rate:</span> {pendingLoan.interestRate}%</p>
                       <p><span className="font-semibold">Total Duration (in Months) :</span> {pendingLoan.tenureInMonths}</p>
                       <p><span className="font-semibold">Loan Type :</span> {pendingLoan.loanType}</p>
-                      <p><span className="font-semibold">EMI Per Month:</span> ₹{pendingLoan.repaymentSchedule?.[0]?.amountDue || 0}</p>
+                      <p><span className="font-semibold">EMI:</span> ₹{pendingLoan.repaymentSchedule?.[0]?.amountDue || 0}</p>
                       <p><span className="font-semibold">Next Due Date:</span> {
                         pendingLoan.repaymentSchedule?.find(r => r.status === 'due')?.dueDate
                           ? new Date(pendingLoan.repaymentSchedule.find(r => r.status === 'due')?.dueDate).toLocaleDateString()
                           : 'All EMIs Paid'
                       }</p>
+                      <p><span className='font-semibold'>EMIs Left : </span>{
+                        pendingLoan.repaymentSchedule 
+                        ? pendingLoan.repaymentSchedule.filter(r => r.status === 'due').length 
+                        : 0
+                      }
+
+                      </p>
                       <div>
                         <label className="block font-semibold mb-1">Pay EMI (₹):</label>
                         <input type="number" placeholder="Enter EMI amount" className="w-full p-2 border rounded-lg"
@@ -449,13 +456,11 @@ function AdminUserProfile() {
                 <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
                   <summary className="text-2xl font-bold mb-4 cursor-pointer">Create New Loan</summary>
                   <div className="space-y-4 mt-4">
-                    <div className="flex justify-end mt-6">
                       <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
                         onClick={handleCreateLoan}
                       >
                         Create Loan
                       </button>
-                    </div>
                   </div>
                 </details>
               </>

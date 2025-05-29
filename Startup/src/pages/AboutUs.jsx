@@ -6,7 +6,7 @@ function AboutUs() {
       <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg flex justify-center mt-5">
         OUR TEAM
       </h1>
-      <div className="container px-5 py-10 mx-auto py-38">
+      <div className="container px-5 py-38 mx-auto">
         <div className="flex flex-wrap -m-4">
           <div className="p-4 lg:w-1/2">
             <div className="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left">
