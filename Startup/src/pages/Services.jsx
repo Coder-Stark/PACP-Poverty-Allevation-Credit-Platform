@@ -31,7 +31,7 @@ function Services() {
                 <h2 className="tracking-widest text-xl flex justify-center title-font font-extrabold mb-1">
                   Fixed Deposit (FD)
                 </h2>
-                <p className="leading-relaxed mb-3">
+                <div className="leading-relaxed mb-3">
                   Our Fixed Deposit (FD) plans offer highly attractive interest rates based on tenure:
                   <ul className="list-inside mt-2">
                     <li>✔ 36+ months – <strong>8.0%</strong></li>
@@ -43,7 +43,7 @@ function Services() {
                     <li>✔ Less than 6 months – <strong>2.5%</strong></li>
                   </ul>
                   Compared to traditional banks, our FD rates are significantly higher, helping your money grow faster with flexible tenures to suit your goals.
-                </p>
+                </div>
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ function Services() {
                 <h2 className="tracking-widest text-xl flex justify-center title-font font-extrabold mb-1">
                   Personal Loans
                 </h2>
-                <p className="leading-relaxed mb-3">
+                <div className="leading-relaxed mb-3">
                   We offer quick and transparent personal loans with flexible interest rates based on tenure:
                   <ul className="list-inside mt-2">
                     <li>✔ 24+ months – <strong>17.0%</strong> annually</li>
@@ -65,7 +65,7 @@ function Services() {
                     <li>✔ Less than 6 months – <strong>15.0%</strong></li>
                   </ul>
                   Our loans are processed faster with minimal documentation, lower interest than many private lenders, and are designed to meet personal, business, or emergency needs. Choose us for transparency and customer-first service.
-                </p>
+                </div>
               </div>
 
             </div>
