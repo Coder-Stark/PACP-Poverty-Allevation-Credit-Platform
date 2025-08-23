@@ -73,6 +73,33 @@ function PortFolio() {
   if (!user) return <div>Loading user data...</div>;
   return (
     <div className="p-8 space-y-8">
+
+{/* Data Update Note Section */}
+<div className="border border-gray-300 shadow-lg rounded-2xl p-6 w-full max-w-4xl mx-auto mt-6 bg-white">
+  <p className="mb-4 text-gray-700">
+    <strong>Note:</strong> All your information is maintained and updated by{" "}
+    <span className="text-blue-600 font-semibold">Admin only</span>.
+  </p>
+
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <p className="text-gray-600">
+      If you have active deposits and credits, your profile
+      statement will look like this:
+    </p>
+
+    <a
+      href="/sample-pdf.pdf"                            // static file in public/
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition"
+    >
+      View Sample PDF
+    </a>
+  </div>
+</div>
+
+
+      {/* Profile Section  */}
       <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6 border-b pb-2">
           <h1 className="text-3xl font-bold">Your Profile</h1>
@@ -116,67 +143,77 @@ function PortFolio() {
         </div>
       </div>
 
-      <h1 className="text-3xl font-bold text-center mb-8">Deposites</h1>    
-      <div className="max-w-4xl mx-auto space-y-6">
-        {rd && (
-          <div className="border rounded-xl p-6 shadow">
-            <h2 className="text-xl font-bold mb-2">Recurring Deposit (RD)</h2>
-              <p><span className="font-semibold">Application No:</span> {rd.applicationNumber}</p>
-              <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd.totalInvestedAmount}</p>
-              <p><span className="font-semibold">Current Investment Value:</span> ₹{rd.currentInvestmentValue}</p>
-              <p><span className="font-semibold">Amount Per Month</span> ₹{rd.amountPerMonth}</p>
-              <p><span className="font-semibold">Last Deposite Date:</span> {new Date(rd.lastDepositeDate).toLocaleDateString()}</p>
-              <p><span className="font-semibold">Total Deposited RDs:</span> {rd.rdCount}</p>
+      {/* Deposite sections  */}
+      {(rd || fd) ? (
+        <>
+          <h1 className="text-3xl font-bold text-center mb-8">Deposits Section</h1>    
+          <div className="max-w-4xl mx-auto space-y-6">
             
-          </div>
-        )}
-
-        {fd && (
-          <div className="border rounded-xl p-6 shadow">
-            <h2 className="text-xl font-bold mb-2">Fixed Deposit (FD)</h2>
-              <p><span className="font-semibold">Application No:</span> {fd.applicationNumber}</p>
-              <p><span className="font-semibold">Invested Amount:</span> ₹{fd.depositAmount}</p>
-              <p><span className="font-semibold">Maturity Amount:</span> ₹{fd.maturityAmount}</p>
-              <p><span className="font-semibold">Interest Rate:</span> {fd.interestRate}%</p>
-              <p><span className="font-semibold">Total Duration (in Months):</span> {fd.tenureInMonths}</p>
-              <p><span className="font-semibold">Start Date:</span> {new Date(fd.startDate).toLocaleDateString()}</p>
-              <p><span className="font-semibold">Maturity Date:</span> {new Date(fd.maturityDate).toLocaleDateString()}</p>
-          </div>
-        )}
-
-        <h1 className="text-3xl font-bold text-center mb-8">Credits</h1>  
-        {loan && loan.length > 0 && (
-          <div className="border rounded-xl p-6 shadow">
-            <h2 className="text-xl font-bold mb-2">Loan Details</h2>
-            {loan.map((l, i) => (
-              <div key={i} className="mb-4 border-b pb-2">
-                <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
-                <p><strong>Status:</strong> {l.status}</p>
-                <p><strong>Loan Disbursment Date:</strong> {
-                  l.applicationDate
-                    ? new Date(l.applicationDate).toLocaleDateString()
-                    : 'N/A'
-                }</p>
-                <p><strong>Loan Amount:</strong> ₹{l.amount}</p>
-                <p><strong>Interest Rate:</strong> {l.interestRate}%</p>
-                <p><strong>Total Duration (in Months):</strong> {l.tenureInMonths} months</p>
-                <p><strong>Loan Type:</strong> {l.loanType}</p>
-                <p><strong>EMI:</strong> ₹{l.repaymentSchedule?.[0]?.amountDue || 'N/A'}</p>
-                <p><strong>Next Due Date:</strong> {
-                  l.repaymentSchedule?.find(r => r.status === 'due')?.dueDate
-                    ? new Date(l.repaymentSchedule.find(r => r.status === 'due')?.dueDate).toLocaleDateString()
-                    : 'All EMIs Paid'
-                }</p>
-                <p><span className='font-semibold'>EMIs Left : </span>{
-                        l.repaymentSchedule 
-                        ? l.repaymentSchedule.filter(r => r.status === 'due').length 
-                        : 0
-                }</p>
+            {rd && (
+              <div className="border rounded-xl p-6 shadow">
+                <h2 className="text-xl font-bold mb-2">Recurring Deposit (RD)</h2>
+                <p><span className="font-semibold">Application No:</span> {rd.applicationNumber}</p>
+                <p><span className="font-semibold">Total Invested Amount:</span> ₹{rd.totalInvestedAmount}</p>
+                <p><span className="font-semibold">Current Investment Value:</span> ₹{rd.currentInvestmentValue}</p>
+                <p><span className="font-semibold">Amount Per Month:</span> ₹{rd.amountPerMonth}</p>
+                <p><span className="font-semibold">Last Deposit Date:</span> {new Date(rd.lastDepositeDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold">Total Deposited RDs:</span> {rd.rdCount}</p>
               </div>
-            ))}
+            )}
+      
+            {fd && (
+              <div className="border rounded-xl p-6 shadow">
+                <h2 className="text-xl font-bold mb-2">Fixed Deposit (FD)</h2>
+                <p><span className="font-semibold">Application No:</span> {fd.applicationNumber}</p>
+                <p><span className="font-semibold">Invested Amount:</span> ₹{fd.depositAmount}</p>
+                <p><span className="font-semibold">Maturity Amount:</span> ₹{fd.maturityAmount}</p>
+                <p><span className="font-semibold">Interest Rate:</span> {fd.interestRate}%</p>
+                <p><span className="font-semibold">Total Duration (in Months):</span> {fd.tenureInMonths}</p>
+                <p><span className="font-semibold">Start Date:</span> {new Date(fd.startDate).toLocaleDateString()}</p>
+                <p><span className="font-semibold">Maturity Date:</span> {new Date(fd.maturityDate).toLocaleDateString()}</p>
+              </div>
+            )}
+      
           </div>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className="text-center py-10">
+          <h1 className="text-2xl font-bold mb-2">Deposits Section</h1>
+          <p className="text-gray-600">No deposits available at the moment.</p>
+        </div>
+      )}
+
+      {/* Credit Section  */}
+      <h1 className="text-3xl font-bold text-center mb-8">Credits Section</h1>  
+      {loan && loan.length > 0 ? (
+        <div className="border rounded-xl p-6 shadow">
+          <h2 className="text-xl font-bold mb-4">Loan Details</h2>
+      
+          {loan.map((l, i) => {
+            const nextDue = l.repaymentSchedule?.find(r => r.status === 'due');
+            const emisLeft = l.repaymentSchedule 
+              ? l.repaymentSchedule.filter(r => r.status === 'due').length 
+              : 0;
+          
+            return (
+              <div key={i} className="mb-6 border-b pb-4 last:border-b-0">
+                <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber || 'N/A'}</p>
+                <p><strong>Status:</strong> {l.status || 'N/A'}</p>
+                <p><strong>Loan Disbursement Date:</strong> {l.applicationDate ? new Date(l.applicationDate).toLocaleDateString() : 'N/A'}</p>
+                <p><strong>Loan Amount:</strong> ₹{l.amount ?? 'N/A'}</p>
+                <p><strong>Interest Rate:</strong> {l.interestRate ?? 'N/A'}%</p>
+                <p><strong>Total Duration:</strong> {l.tenureInMonths ?? 'N/A'} months</p>
+                <p><strong>Loan Type:</strong> {l.loanType || 'N/A'}</p>
+                <p><strong>EMI:</strong> ₹{l.repaymentSchedule?.[0]?.amountDue ?? 'N/A'}</p>
+                <p><strong>Next Due Date:</strong> {nextDue?.dueDate ? new Date(nextDue.dueDate).toLocaleDateString() : 'All EMIs Paid'}</p>
+                <p><strong>EMIs Left:</strong> {emisLeft}</p>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="text-center text-gray-500">No loan details available</p>
+      )}
     </div>
   );
 }
