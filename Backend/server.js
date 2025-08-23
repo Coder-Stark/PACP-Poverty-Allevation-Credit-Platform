@@ -12,6 +12,8 @@ import rdRoutes from './src/routes/rdRoutes.js';
 import fdRoutes from './src/routes/fdRoutes.js';
 import loanRoutes from './src/routes/loanRoutes.js';
 
+import printRoutes from './src/routes/printRoutes.js';
+
 dotenv.config();
 const app = express();
 
@@ -31,6 +33,10 @@ app.use(fileUpload({
     tempFileDir: './tmp',
 }))
 
+//EJS setup
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
 //routes
 app.use('/auth', AuthRouter);
 //admins
@@ -40,6 +46,7 @@ app.use('/api/finance/fd', fdRoutes);
 app.use('/api/finance/loan', loanRoutes);
 //user(normal)
 app.use('/api/user', userRoutes);
+app.use('/api/print', printRoutes);
 
 //should always place for not defined pages
 app.use((req, res) => {

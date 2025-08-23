@@ -47,11 +47,39 @@ function PortFolio() {
     fetchUser();
   }, []);
 
+  const handlePrint = async()=>{
+    try{
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/print/profile/${user._id}`,
+        {
+          headers: {Authorization: `Bearer ${token}`},
+          responseType: "blob",
+        }
+      );
+
+      //convert blob to object url
+      const fileUrl = window.URL.createObjectURL(new Blob([response.data], {type: "application/pdf"}));
+      window.open(fileUrl, "_blank");                         //open in new tab
+    }catch(err){
+      console.error("Error generating PDF: ", err);
+    }
+  }
+
   if (!user) return <div>Loading user data...</div>;
   return (
     <div className="p-8 space-y-8">
       <div className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6 border-b pb-2">Your Profile</h1>
+          <div className="flex justify-between items-center mb-6 border-b pb-2">
+          <h1 className="text-3xl font-bold">Your Profile</h1>
+          <button
+            // onClick={() => window.print()}
+            onClick={handlePrint}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md cursor-pointer"
+          >
+            Print
+          </button>
+          </div>
 
         <div className="flex flex-col md:flex-row justify-between items-start gap-8">
           <div className="space-y-4 w-full md:w-1/2">

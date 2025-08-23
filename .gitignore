@@ -12,3 +12,5 @@ main-app/dist/
 
 #testing
 testPassword.js
+generated.html
+printController2.js
