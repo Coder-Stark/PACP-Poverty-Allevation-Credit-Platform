@@ -6,6 +6,7 @@ function PortFolio() {
   const [rd, setRD] = useState(null);
   const [fd, setFD] = useState(null);
   const [loan, setLoan] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const fetchUser = async () => {
     try {
@@ -49,6 +50,7 @@ function PortFolio() {
 
   const handlePrint = async()=>{
     try{
+      setIsGenerating(true);
       const token = localStorage.getItem("token");
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/print/profile/${user._id}`,
@@ -63,6 +65,8 @@ function PortFolio() {
       window.open(fileUrl, "_blank");                         //open in new tab
     }catch(err){
       console.error("Error generating PDF: ", err);
+    }finally{
+      setIsGenerating(false);
     }
   }
 
@@ -73,11 +77,15 @@ function PortFolio() {
           <div className="flex justify-between items-center mb-6 border-b pb-2">
           <h1 className="text-3xl font-bold">Your Profile</h1>
           <button
-            // onClick={() => window.print()}
             onClick={handlePrint}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md cursor-pointer"
+            disabled={isGenerating} // disable while generating
+            className={`px-4 py-2 rounded-lg shadow-md text-white ${
+              isGenerating
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+            }`}
           >
-            Print
+            {isGenerating ? "Generating..." : "Print Profile"}
           </button>
           </div>
 

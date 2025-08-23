@@ -7,7 +7,7 @@ import RdModel from '../models/RdModel.js';
 import FdModel from '../models/FdModel.js';
 import LoanModel from '../models/LoanModel.js';
 
-import fs from 'fs';
+// import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,7 +51,7 @@ const generateProfilePDF = async(req, res)=>{
         const htmlContent = await ejs.renderFile(path.join(__dirname, '../../views', 'profile.ejs'), profileData);
         
         // ✅ Save generated HTML into a file (for debugging/preview purposes)
-        fs.writeFileSync('./generated2.html', htmlContent);
+        // fs.writeFileSync('./generated2.html', htmlContent);
 
         await page.setContent(htmlContent, {waitUntil: 'domcontentloaded'});
         
@@ -65,13 +65,12 @@ const generateProfilePDF = async(req, res)=>{
         });
         
         await browser.close();
-        // res.contentType("application/pdf");
         // ✅ Set headers so browser can preview PDF
         res.set({
             'Content-Type': 'application/pdf',
             'Content-Disposition': 'inline; filename="profile.pdf"',
         });
-        res.send(pdfBuffer);
+        res.end(pdfBuffer);
         
     }catch(err){
         console.log(err);
