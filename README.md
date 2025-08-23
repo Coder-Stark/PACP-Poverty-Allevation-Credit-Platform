@@ -28,28 +28,102 @@ Think of it like a community finance platform: members save, grow, and become el
 * Node.js, Express.js
 * MongoDB (Mongoose)
 * JSON Web Tokens (JWT)
+* Cloudinary (Media Management)
 
-**Optional (for server PDFs)**
+**for server PDFs**
 * EJS Templates, Puppeteer (server-side PDF generation)
 
 ## Project Structure
 
 ```
-pacp/
+
+RootApp/
 ├── backend/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── config/
-│   └── server.js
+|---  node_modules/
+      src/
+        ┣ config
+        ┃ ┗ cloudinary.js
+        ┃ ┗ db.js
+        ┣ controllers
+        ┃ ┣ adminController.js
+        ┃ ┣ authController.js
+        ┃ ┣ fdController.js
+        ┃ ┣ loanController.js
+        ┃ ┣ printController.js
+        ┃ ┣ rdController.js
+        ┃ ┗ userController.js
+        ┣ middleware
+        ┃ ┣ authMiddlware.js
+        ┃ ┗ validationMiddleware.js
+        ┣ models
+        ┃ ┣ FdModel.js
+        ┃ ┣ LoanModel.js
+        ┃ ┣ RdModel.js
+        ┃ ┗ UserModel.js
+        ┗ routes
+        ┃ ┣ adminRoutes.js
+        ┃ ┣ authRoutes.js
+        ┃ ┣ fdRoutes.js
+        ┃ ┣ loanRoutes.js
+        ┃ ┣ printRoutes.js
+        ┃ ┣ rdRoutes.js
+        ┃ ┗ userRoutes.js
+|     |-- tmp/
+|     |-- views/
+        |-- profile.ejs
+|     |-- .env
+|     |-- .env.sample
+|     |-- package-lock.json
+│     └── package.json 
+│     ├── server.js                       //or index.js
+
+
 ├── frontend/
+|   |-- node_modules
 │   ├── public/
-│   │   └── pdfs/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       └── App.jsx
-└── README.md
+         |- sample-pdf.pdf
+        src/
+           ┣ components
+           ┃ ┣ Footer.jsx
+           ┃ ┣ Navbar.jsx
+           ┣ context
+           ┃ ┗ AuthContext.jsx
+           ┃ ┗ ThemeContext.jsx
+           ┣ layouts
+           ┃ ┗ MainLayout.jsx
+           ┣ pages
+           ┃ ┣ adminView
+           ┃ ┃ ┣ AdminDashboard.jsx
+           ┃ ┃ ┣ AdminUserProfile.jsx
+           ┃ ┃ ┣ FinanceOverview.jsx
+           ┃ ┃ ┣ ManageUsers.jsx
+           ┃ ┣ auth
+           ┃ ┃ ┣ Login.jsx
+           ┃ ┃ ┗ Signup.jsx
+           ┃ ┣ AboutUs.jsx
+           ┃ ┣ ContactUs.jsx
+           ┃ ┣ Home.jsx
+           ┃ ┣ PortFolio.jsx
+           ┃ ┣ Schemes.jsx
+           ┃ ┣ Services.jsx
+           ┣ App.jsx
+           ┣ index.css
+           ┣ main.jsx
+           ┗ utils.js
+│   ├── .env
+│   ├── .env.sample
+|   |-- .gitignore
+|   |-- eslint.config.js
+|   |-- index.html
+|   |-- package-lock.json
+│   ├── package.json
+|   |-- README.md
+|   |-- tailwind.config.js
+│   └── vite.config.js
+|-- gitignore.js
+├── README.md
+└── package-lock.json / yarn.lock
+
 ```
 
 ## Setup & Installation
@@ -63,7 +137,7 @@ pacp/
 ### Clone the repository
 
 ```bash
-git clone https://github.com/your-username/pacp.git
+git clone https://github.com/Coder-Stark/RootApp.git
 cd pacp
 ```
 
@@ -77,18 +151,23 @@ npm install
 Create a `.env` file in `backend/`:
 
 ```
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
+PORT=<port>
+MONGO_URI=<mongo_url>
+JWT_SECRET=<secretKey>
+ADMIN_PASSWORD=<admin_password>
+
+CLOUD_NAME=<visit_cloudinary>
+CLOUD_API_KEY=<visit_cloudinary>
+CLOUD_API_SECRET=<visit_cloudinary>
 ```
 
 Start backend:
 
 ```bash
-npm run dev
+nodemon server.js
 ```
 
-The API will run on `http://localhost:5000`.
+The API will run on `http://localhost:8080`.
 
 ### Frontend setup
 
@@ -113,29 +192,13 @@ The app runs on `http://localhost:5173`.
 5. Click Print Profile to print your profile card
 6. Click View Sample PDF to preview how a combined RD/FD/Loan statement looks
 
-**Static sample PDF path:** `frontend/public/pdfs/user-statement.pdf`
+**Static sample PDF path:** `frontend/public/sample-pdf.pdf`
 
 ### As an Admin
 
 * Update user data for RD, FD, Loan
 * Generate and share PDFs (optionally server-side)
 * Maintain data integrity (users see a note: "Your data is updated by Admin only")
-
-## Implementation Notes
-
-### Conditional Rendering (UI)
-
-* Deposits Section only renders if RD or FD exists, otherwise shows a fallback: "No deposits available at the moment."
-* Credits Section matches the same behavior for loans: Shows heading + cards if loans exist; otherwise a fallback "No loans available"
-
-### Static Sample PDF
-
-* Place your file at: `frontend/public/pdfs/user-statement.pdf`
-* Link to it with: `<a href="/pdfs/user-statement.pdf" target="_blank">View Sample PDF</a>`
-
-### Print Profile
-
-* Button triggers `handlePrint()` to print profile content
 
 ## Security & Compliance
 
@@ -151,12 +214,6 @@ The app runs on `http://localhost:5173`.
 * Multi-language support
 * Mobile app (React Native)
 
-## Common Issues
-
-* **CORS errors**: configure allowed origins on the backend
-* **MongoDB connection fails**: re-check MONGO_URI and IP whitelist (Atlas)
-* **JWT invalid/expired**: ensure correct secret and token refresh strategy
-
 ## License
 
 This project is licensed under the MIT License.
@@ -165,6 +222,6 @@ This project is licensed under the MIT License.
 
 **Shivam Kumar**
 
-LinkedIn: https://www.linkedin.com/in/shivam-kumar-07b061270/
+LinkedIn: https://www.linkedin.com/in/shivam-kumar-fullstack-developer/
 
 Open to collaboration and contributions!
