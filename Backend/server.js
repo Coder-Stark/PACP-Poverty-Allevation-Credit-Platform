@@ -41,7 +41,7 @@ app.set('views', './views');
 app.use('/auth', AuthRouter);
 //admins
 app.use('/api/admin', adminRoutes);
-app.use('/api/finance/rd', rdRoutes);          //RD, FD, Loan
+app.use('/api/finance/rd', rdRoutes);      
 app.use('/api/finance/fd', fdRoutes);
 app.use('/api/finance/loan', loanRoutes);
 //user(normal)
