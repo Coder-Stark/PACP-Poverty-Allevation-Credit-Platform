@@ -17,7 +17,7 @@ function Home() {
       </p>
 
       {/* Intro Section */}
-      <div className="mt-8 max-w-3xl text-base md:text-lg text-gray-200 leading-relaxed">
+      <div className="mt-8 max-w-3xl text-base md:text-lg leading-relaxed">
         <p>
           PACP is a modern web application similar to online banking systems,
           offering services like <span className="font-semibold">Recurring Deposits (RD)</span>,{" "}
