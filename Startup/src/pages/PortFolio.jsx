@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {useEffect, useState} from 'react';
+import {handleError} from '../utils.js';
 
 function PortFolio() {
   const [user, setUser] = useState(null);
@@ -52,9 +53,7 @@ function PortFolio() {
     try{
       setIsGenerating(true);
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/print/profile/${user._id}`,
-        {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/print/profile/${user._id}`, {
           headers: {Authorization: `Bearer ${token}`},
           responseType: "blob",
         }
@@ -63,9 +62,12 @@ function PortFolio() {
       //convert blob to object url
       const fileUrl = window.URL.createObjectURL(new Blob([response.data], {type: "application/pdf"}));
       window.open(fileUrl, "_blank");                         //open in new tab
-    }catch(err){
-      console.error("Error generating PDF: ", err);
-    }finally{
+    }catch (err) {
+      console.error("PDF generation failed:", err.message);
+
+      // Show meaningful error toast/message
+      handleError("You have to first create a deposit and credit before using the print option.");
+    } finally {
       setIsGenerating(false);
     }
   }
