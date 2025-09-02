@@ -21,7 +21,7 @@ function Navbar() {
         <div className="flex items-center justify-center w-full md:w-auto md:justify-start">
           <Link to="/" className="flex items-center">
             <img 
-              src="https://raw.githubusercontent.com/Coder-Stark/assets/refs/heads/master/newlogo.png" 
+              src="https://res.cloudinary.com/doayyhpdi/image/upload/v1756780294/companylogo_benqlh.png" 
               alt="Logo" 
               className="w-12 h-12 rounded-full shadow-lg"
             />
