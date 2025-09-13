@@ -1,11 +1,13 @@
-import Users from '../models/UserModel.js';
+import User from '../models/UserModel.js';
+import RD from "../models/RdModel.js";
+import FD from "../models/FdModel.js";
 import cloudinary from '../config/cloudinary.js';
 import fs from 'fs';
 
 //get me (current user)
 export const getUserData = async (req, res) => {
     try {
-        const user = await Users.findById(req.user._id).select("-password");
+        const user = await User.findById(req.user._id).select("-password");
         if (!user) return res.status(404).json({ message: "User not found" });
 
         res.status(200).json(user);
@@ -17,7 +19,7 @@ export const getUserData = async (req, res) => {
 //get single user by ID
 export const getSingleUserById = async (req, res)=>{
     try{
-        const user = await Users.findById(req.params.id).select("-password");
+        const user = await User.findById(req.params.id).select("-password");
         if(!user) return res.status(404).json({message: "User not Found"});
         res.json(user);
     }catch(err){
@@ -26,10 +28,10 @@ export const getSingleUserById = async (req, res)=>{
     }
 };
 
-// Fetch All Users 
+// Fetch All User 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await Users.find({role: "user"}).select("-password");
+        const users = await User.find({role: "user"}).select("-password");
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Internal server error", error });
@@ -39,7 +41,7 @@ export const getAllUsers = async (req, res) => {
 //Fetch All Admins
 export const getAllAdmins = async (req, res) => {
     try {
-        const users = await Users.find({role: "admin"}).select("-password");
+        const users = await User.find({role: "admin"}).select("-password");
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Internal server error", error });
@@ -70,7 +72,7 @@ export const uploadUserImage = async (req, res)=>{
             if(err) console.error("Failed to delete temp file: ", err);
         })
 
-        const updatedUser = await Users.findByIdAndUpdate(
+        const updatedUser = await User.findByIdAndUpdate(
             userId,
             {userImage: imageUpload.secure_url},
             {new: true}
@@ -108,7 +110,7 @@ export const uploadUserSignature = async (req, res) => {
         if(err) console.error("Failed to delete temp File : ", err);
     })
 
-    const updatedUser = await Users.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { userSignature: signatureUpload.secure_url },
       { new: true }
@@ -123,3 +125,108 @@ export const uploadUserSignature = async (req, res) => {
     res.status(500).json({ error: "Signature upload failed" });
   }
 };
+
+//get FinanceOverview
+export const getFinanceOverview = async(req, res)=>{
+    try{
+        //Active members (role: user + hasRD/hasFD/hasLoan)
+        const activeMembers = await User.countDocuments({
+            role: "user",
+            $or: [{hasRD: true}, {hasFD: true}, {hasLoan: true}],
+        });
+
+        //Inactive members (role: user + no hasRD/hasFD/hasLoan)
+        const inactiveMembers = await User.countDocuments({
+            role: "user",
+            hasRD: false,
+            hasFD: false,
+            hasLoan: false,
+        });
+
+        //Total Admins
+        const totalAdmins = await User.countDocuments({
+            role: "admin",
+        });
+
+        
+        // RD Calculations 
+        const rdCalculations = await RD.aggregate([
+            {
+                $group: {
+                    _id: null, 
+                    rdInvestedSum: {$sum: "$totalInvestedAmount"},
+                    rdCurrentSum: {$sum: "$currentInvestmentValue"}
+                } 
+            },
+        ]);
+
+        // FD Calculations
+        const fdCalculations = await FD.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    fdInvestedSum: {$sum: "$depositAmount"},
+                    fdMaturitySum: {$sum: "$maturityAmount"}
+                }
+            }
+        ])
+
+        /*
+        // Loan Calculations
+        const loanCalculations = await Loan.aggregate([
+            {
+                $match: {
+                    status: {
+                        $in: ["approved", "active"]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    loanDisbursedSum: {$sum: "$amount"},
+                    loanOutstandingSum: {$sum: "$remainingBalance"}
+                }
+            }
+        ])
+        */
+
+        //extract values with defaults (mongoDB aggregation always return array so we have to extract it)
+        const rdInvestedSum = rdCalculations[0]?.rdInvestedSum || 0;
+        const rdCurrentSum = rdCalculations[0]?.rdCurrentSum || 0;
+        const fdInvestedSum = fdCalculations[0]?.fdInvestedSum || 0;
+        const fdMaturitySum = fdCalculations[0]?.fdMaturitySum || 0;
+        const totalContributions = rdInvestedSum + fdInvestedSum;
+
+        /*
+        const loanDisbursedSum = loanCalculations[0]?.loanDisbursedSum || 0;
+        const loanOutstandingSum = loanCalculations[0]?.loanOutstandingSum || 0;
+
+        const availableLoanPool = totalContributions - loanDisbursedSum;
+        */
+        res.json({
+            activeMembers,
+            inactiveMembers,
+            totalAdmins,
+
+            rdInvestedSum,
+            rdCurrentSum,
+            
+            fdInvestedSum,
+            fdMaturitySum,
+            totalContributions,
+            
+            /*
+            loanDisbursedSum,
+            loanOutstandingSum,
+            loanRepaidSum: loanDisbursedSum - loanOutstandingSum,
+
+            availableLoanPool
+            */
+        })
+
+    }catch(err){
+        console.error("Error fetching finance overview: ", err);
+        res.status(500).json({message: "Getting Finance Detailed Failed"});
+    }
+}
