@@ -383,18 +383,17 @@ function AdminUserProfile() {
           {(() => {
             const pendingLoan = loan?.find(l => l.status === 'pending');
             const completedLoans = loan?.filter(l => l.status === 'completed') || [];
-            const hasLoan = loan?.length > 0;
           
-            // 1. PENDING LOAN CARD
-            if (pendingLoan) {
+            //case 1: Pending + Completed
+            if (pendingLoan && completedLoans.length > 0) {
               return (
                 <>
-                  {/* Card 1: Pending Loan */}
+                  {/* Pending Loan */}
                   <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
                     <summary className="text-2xl font-bold mb-4 cursor-pointer">Loan Details (Pending)</summary>
                     <div className="space-y-4 mt-4">
                       <p><span className="font-semibold">Application No:</span> {pendingLoan.loanApplicationNumber}</p>
-                      <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toLocaleDateString()}</p>
+                      <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
                       <p><span className="font-semibold">Loan Amount:</span> ₹{pendingLoan.amount}</p>
                       <p><span className="font-semibold">Interest Rate:</span> {pendingLoan.interestRate}%</p>
                       <p><span className="font-semibold">Total Duration (in Months) :</span> {pendingLoan.tenureInMonths}</p>
@@ -427,32 +426,108 @@ function AdminUserProfile() {
                       </div>
                     </div>
                   </details>
-                </>
-              );
-            }
-            // NO PENDING LOANS → Render Completed + Create Loan Cards
-            return (
-              <>
-                {/* Card 2: Completed Loans or Message */}
-                <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+
+                  {/* Completed Loans  */}
+                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
                   <summary className="text-2xl font-bold mb-4 cursor-pointer">Completed Loan(s)</summary>
                   <div className="space-y-4 mt-4">
-                    {completedLoans.length > 0 ? (
-                      completedLoans.map((l, idx) => (
-                        <div key={idx} className="border p-4 rounded-lg bg-gray-50">
+                      {completedLoans.map((l, idx) => (
+                        <div key={idx} className="border p-4 rounded-lg">
                           <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
                           <p><span className="font-semibold">Loan Amount:</span> ₹{l.amount}</p>
                           <p><span className="font-semibold">Interest Rate:</span> {l.interestRate}%</p>
+                          <p><span className="font-semibold">Application Date:</span> {new Date(l.applicationDate).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
+                          <p><span className="font-semibold">Tenure (in Months):</span> {l.tenureInMonths}</p>
                           <p className="text-green-600 font-semibold">All EMIs Paid</p>
                         </div>
-                      ))
-                    ) : (
-                      <p>No completed loans yet.</p>
-                    )}
+                      ))}
+                  </div>
+                  </details>
+                </>
+              );
+            }
+
+            //case 2: Only Pending
+            if(pendingLoan){
+              return (
+                <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                  <summary className="text-2xl font-bold mb-4 cursor-pointer">Loan Details (Pending)</summary>
+                  <div className="space-y-4 mt-4">
+                    <p><span className="font-semibold">Application No:</span> {pendingLoan.loanApplicationNumber}</p>
+                    <p><span className="font-semibold">Loan Disbursment Date:</span> {new Date(pendingLoan.applicationDate).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
+                    <p><span className="font-semibold">Loan Amount:</span> ₹{pendingLoan.amount}</p>
+                    <p><span className="font-semibold">Interest Rate:</span> {pendingLoan.interestRate}%</p>
+                    <p><span className="font-semibold">Total Duration (in Months) :</span> {pendingLoan.tenureInMonths}</p>
+                    <p><span className="font-semibold">Loan Type :</span> {pendingLoan.loanType}</p>
+                    <p><span className="font-semibold">EMI:</span> ₹{pendingLoan.repaymentSchedule?.[0]?.amountDue || 0}</p>
+                    <p><span className="font-semibold">Next Due Date:</span> {
+                      pendingLoan.repaymentSchedule?.find(r => r.status === 'due')?.dueDate
+                        ? new Date(pendingLoan.repaymentSchedule.find(r => r.status === 'due')?.dueDate).toLocaleDateString()
+                        : 'All EMIs Paid'
+                    }</p>
+                    <p><span className='font-semibold'>EMIs Left : </span>{
+                      pendingLoan.repaymentSchedule 
+                      ? pendingLoan.repaymentSchedule.filter(r => r.status === 'due').length 
+                      : 0
+                    }
+                    </p>
+                    <div>
+                      <label className="block font-semibold mb-1">Pay EMI (₹):</label>
+                      <input type="number" placeholder="Enter EMI amount" className="w-full p-2 border rounded-lg"
+                        value={emiAmount} onChange={(e) => setEmiAmount(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-4 mt-6">
+                      <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                        onClick={handlePayEMI}
+                      >
+                        Pay EMI
+                      </button>
+                    </div>
                   </div>
                 </details>
-                  
-                {/* Card 3: Create Loan */}
+              )
+            }
+
+            //case 3: Only Completed Loan = compltedLoan + create Loan
+            if(completedLoans.length > 0){
+              return(
+                <>
+                  {/* Completed Loans  */}
+                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                    <summary className="text-2xl font-bold mb-4 cursor-pointer">Completed Loan(s)</summary>
+                    <div className="space-y-4 mt-4">
+                        {completedLoans.map((l, idx) => (
+                          <div key={idx} className="border p-4 rounded-lg">
+                            <p><span className="font-semibold">Application No:</span> {l.loanApplicationNumber}</p>
+                            <p><span className="font-semibold">Loan Amount:</span> ₹{l.amount}</p>
+                            <p><span className="font-semibold">Interest Rate:</span> {l.interestRate}%</p>
+                            <p><span className="font-semibold">Application Date:</span> {new Date(l.applicationDate).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
+                            <p><span className="font-semibold">Tenure (in Months):</span> {l.tenureInMonths}</p>
+                            <p className="text-green-600 font-semibold">All EMIs Paid</p>
+                          </div>
+                        ))}
+                    </div>
+                  </details>
+
+                  {/* Create New Loan  */}
+                  <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
+                    <summary className="text-2xl font-bold mb-4 cursor-pointer">Create New Loan</summary>
+                    <div className="space-y-4 mt-4">
+                        <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold cursor-pointer"
+                          onClick={handleCreateLoan}
+                        >
+                          Create Loan
+                        </button>
+                    </div>
+                  </details>
+                </>
+              )
+            }
+
+            //case 4: No Pending + No Completed => Only Create Loan
+            return (
+              <>
                 <details className="border border-gray-300 shadow-lg rounded-2xl p-8 w-full">
                   <summary className="text-2xl font-bold mb-4 cursor-pointer">Create New Loan</summary>
                   <div className="space-y-4 mt-4">
