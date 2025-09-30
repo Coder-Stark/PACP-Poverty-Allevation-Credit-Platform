@@ -45,6 +45,9 @@ function Signup() {
         payload.adminPassword = adminPassword;
     }
 
+    setShowWarning(true);
+    setTimer(45);
+
     try {
       const BASE_URL = import.meta.env.VITE_BACKEND_URL;
       const url = `${BASE_URL}/auth/signup`;
