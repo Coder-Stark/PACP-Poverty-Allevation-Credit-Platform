@@ -13,6 +13,7 @@ import fdRoutes from './src/routes/fdRoutes.js';
 import loanRoutes from './src/routes/loanRoutes.js';
 
 import printRoutes from './src/routes/printRoutes.js';
+import paymentRoutes from './src/routes/paymentRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -25,8 +26,8 @@ app.get('/', (req, res) => {
 });
 
 //middlware
-app.use(express.json()); 
 app.use(cors());
+app.use(express.json()); 
 //for uploading files
 app.use(fileUpload({
     useTempFiles: true,
@@ -47,6 +48,7 @@ app.use('/api/finance/loan', loanRoutes);
 //user(normal)
 app.use('/api/user', userRoutes);
 app.use('/api/print', printRoutes);
+app.use('/api/payments', paymentRoutes);
 
 //should always place for not defined pages
 app.use((req, res) => {
